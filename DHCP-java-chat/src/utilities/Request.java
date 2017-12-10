@@ -1,5 +1,7 @@
 package utilities;
 
+import database.Entities.Tbluser;
+import java.util.ArrayList;
 import utilities.Content;
 
 public class Request {
@@ -13,6 +15,8 @@ public class Request {
     public String id;
 
     private boolean login = true;
+    private String fullName;
+    private ArrayList<UserSimple> listFriend;
     private String avatar;
 
     public Request() {
@@ -81,7 +85,23 @@ public class Request {
     public void setLogin(boolean login) {
         this.login = login;
     }
-    
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public ArrayList<UserSimple> getListFriend() {
+        return listFriend;
+    }
+
+    public void setListFriend(ArrayList<UserSimple> listFriend) {
+        this.listFriend = listFriend;
+    }
+
     public String getAvatar() {
         return avatar;
     }

@@ -1,16 +1,24 @@
 package server;
 
 import com.google.gson.Gson;
+import database.DAO.ListfriendDAO;
 import database.DAO.LoginDAO;
+import database.DAO.tblUserUserDAO;
+import database.Entities.Tbluser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utilities.FileConverter;
 import utilities.Request;
 import utilities.RequestType;
+import utilities.UserSimple;
 
 public class ServerThread extends Thread {
 
@@ -28,6 +36,8 @@ public class ServerThread extends Thread {
 
     boolean loginStatus = false;
 
+    private tblUserUserDAO userUserDAO = new tblUserUserDAO();
+
     // thư viện hỗ trợ
     Gson gson = new Gson();
 
@@ -40,7 +50,7 @@ public class ServerThread extends Thread {
         try {
             is = new BufferedReader(new InputStreamReader(s.getInputStream()));
             os = new PrintWriter(s.getOutputStream());
-            
+
             String json = is.readLine();
             Request rq = gson.fromJson(json, Request.class);
             this.id = rq.id;
@@ -71,11 +81,10 @@ public class ServerThread extends Thread {
         Request rq = new Request();
         rq.setLogin(this.loginStatus);
         rq.setType(RequestType.LOGIN);
-        
+
 //        if (this.loginStatus) {
 //            rq.setAvatar(FileConverter.fileToString("images/cuong.jpg"));
 //        }
-        
         String json = gson.toJson(rq);
         this.os.println(json);
         this.os.flush();
@@ -97,7 +106,13 @@ public class ServerThread extends Thread {
 
                     // Kiểm tra tài khoản trong db
                     // loginStatus mặc định là false, thông tin đúng thì đổi sang true
-                    if (loginDAO.checkLogin(user, pass) != null) {
+                    Tbluser userInfo = loginDAO.checkLogin(user, pass);
+
+                    // Chuẩn bị request trả về client, kiểu login
+                    Request rqResponse = new Request();
+                    rqResponse.setType(RequestType.LOGIN);
+
+                    if (userInfo != null) {
                         this.loginStatus = true;
 
                         // Thay đổi trên FormMainServer
@@ -105,14 +120,36 @@ public class ServerThread extends Thread {
                         this.formMainServer.updateTextArea(this.user + " đăng nhập");
                         hashMap.put(user, this);
                         hashMap.remove(id);
-                        
+
                         // tăng số connection                        
                         this.formMainServer.totalConnection++;
                         this.formMainServer.updateTotalConnection();
+
+                        // Cài đặt thông tin user tìm thấy cho rqResponse
+                        rqResponse.setFullName(userInfo.getFullName());
+                        rqResponse.setAvatar(FileConverter.fileToString("images/" + userInfo.getAvartar()));
+
+                        // Lấy list bạn
+                        ListfriendDAO listFriendDAO = new ListfriendDAO();
+                        List<Tbluser> listTblUser = listFriendDAO.getListFriend(user);
+                        ArrayList<UserSimple> listUserSimple = new ArrayList<>();
+                        for (Tbluser tbluser : listTblUser) {
+                            if (hashMap.get(tbluser.getUserName()) != null) {
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true));
+                            } else {
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false));
+                            }
+                        }
+                        rqResponse.setListFriend(listUserSimple);
                     }
 
                     // Gửi kết quả đăng nhập về client
-                    sendLoginResult();
+                    rqResponse.setLogin(this.loginStatus);
+                    String json = gson.toJson(rqResponse);
+                    System.out.println(json);
+                    this.os.println(json);
+                    this.os.flush();
+
                     continue;
                 }
 
@@ -120,14 +157,16 @@ public class ServerThread extends Thread {
                 // Nếu ko phải kiểu đăng nhập thì đẩy đi
                 if (rq.getType() != RequestType.LOGIN) {
                     String friend = rq.getToUser();
-                    
+
                     System.out.println("server da nhan tn");
 
-                    
                     if (this.hashMap.get(friend) != null) {
                         this.hashMap.get(friend).getOs().println(json);
                         this.hashMap.get(friend).getOs().flush();
                         System.out.println("server gui tn");
+
+                        // Lưu vào db
+                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 1);
                     }
                 }
             }

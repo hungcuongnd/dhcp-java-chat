@@ -50,7 +50,7 @@ public class FormLogin extends javax.swing.JFrame {
         setResizable(false);
 
         lblUsername.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        lblUsername.setText("Username");
+        lblUsername.setText("Tài khoản");
 
         txtUsername.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         txtUsername.setText("cuong");
@@ -61,7 +61,7 @@ public class FormLogin extends javax.swing.JFrame {
         });
 
         lblPassword.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        lblPassword.setText("Password");
+        lblPassword.setText("Mật khẩu");
 
         txtPassword.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         txtPassword.setText("1234");
@@ -76,7 +76,7 @@ public class FormLogin extends javax.swing.JFrame {
         lblMsg.setText(" ");
 
         btnExit.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        btnExit.setText("Exit");
+        btnExit.setText("Thoát");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExitActionPerformed(evt);
@@ -84,7 +84,7 @@ public class FormLogin extends javax.swing.JFrame {
         });
 
         btnLogin.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        btnLogin.setText("Login");
+        btnLogin.setText("Đăng nhập");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -117,21 +117,21 @@ public class FormLogin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(19, 19, 19)
                 .addComponent(lblUsername)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblPassword)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnLogin)
                     .addComponent(btnExit))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

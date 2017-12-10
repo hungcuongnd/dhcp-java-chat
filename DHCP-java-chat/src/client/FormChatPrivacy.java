@@ -6,6 +6,8 @@
 package client;
 
 import com.google.gson.Gson;
+import database.DAO.tblUserUserDAO;
+import database.Entities.TbluserUser;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -13,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -38,7 +41,6 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     /**
      * Creates new form FormChatPrivacy1
      */
-    
     private String user = null;
     private String friend = null;
     private String history = "";
@@ -56,23 +58,23 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     int lenAfter = 1;
     boolean hasIcon = false;
     ArrayList<Integer> array = new ArrayList<>();
-    
+
     public FormChatPrivacy(String user, String friend, PrintWriter printWriter) {
         this.user = user;
         this.friend = friend;
         this.printWriter = printWriter;
-        
+
         initComponents();
-        
+
         jtbtnBold.setText("B");
-        DefaultComboBoxModel fontModel=new DefaultComboBoxModel();
-        DefaultComboBoxModel fontSizeModel=new DefaultComboBoxModel();
+        DefaultComboBoxModel fontModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel fontSizeModel = new DefaultComboBoxModel();
         fontSizeModel.addElement("14");
         fontSizeModel.addElement("16");
         fontSizeModel.addElement("18");
         fontSizeModel.addElement("20");
         cboSize.setModel(fontSizeModel);
-        
+
         GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Font[] fonts = e.getAllFonts(); // Get the fonts
 //        for (Font f : fonts) {
@@ -85,27 +87,24 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         fontModel.addElement("Arial");
         cboFont.setModel(fontModel);
         cboFont.setSelectedItem("Arial");
-        
-        
+
         this.setTitle(friend);
 
-        
         JMenuBar mnBar = new JMenuBar();
         JMenu file = new JMenu("File");
         file.setMnemonic(KeyEvent.VK_F);
 
         JMenuItem history = new JMenuItem("History");
         JMenuItem exit = new JMenuItem("Exit");
-        
+
         history.addActionListener((ActionEvent event) -> {
-     
+
         });
-        
-        
-       file.add(history);
-       file.add(exit);
-       
-       mnBar.add(file);
+
+        file.add(history);
+        file.add(exit);
+
+        mnBar.add(file);
         setJMenuBar(mnBar);
     }
 
@@ -130,6 +129,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         jtbtnUnderline = new javax.swing.JToggleButton();
         btnFontColor = new javax.swing.JButton();
         btnEmotion = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,6 +142,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTptxtInput);
 
+        btnSend.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         btnSend.setText("Send");
         btnSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,6 +150,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        cboFont.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         cboFont.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboFont.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -156,6 +158,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        cboSize.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         cboSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,6 +166,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        jtbtnBold.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jtbtnBold.setText("B");
         jtbtnBold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,6 +174,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        jtbtnItalic.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jtbtnItalic.setText("I");
         jtbtnItalic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,6 +182,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        jtbtnUnderline.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jtbtnUnderline.setText("U");
         jtbtnUnderline.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -184,6 +190,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        btnFontColor.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         btnFontColor.setText("Color");
         btnFontColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,6 +205,9 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("jLabel1");
+        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -205,47 +215,50 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSend, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnBold)
+                        .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnItalic)
+                        .addComponent(jtbtnBold, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnUnderline)
+                        .addComponent(jtbtnItalic, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtbtnUnderline, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnFontColor)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(37, Short.MAX_VALUE))
+                        .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSend, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jtbtnBold)
-                        .addComponent(jtbtnItalic)
                         .addComponent(jtbtnUnderline)
-                        .addComponent(btnFontColor)))
-                .addGap(18, 18, 18)
+                        .addComponent(btnFontColor)
+                        .addComponent(jtbtnItalic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jtbtnBold, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cboFont, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cboSize, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnSend, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addComponent(btnSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -257,7 +270,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         sc.setframe(parent);
         sc.setChatWindow(this);
         sc.setTitle("Choose Smiley");
-        sc.setLocationRelativeTo(this);
+//        sc.setLocationRelativeTo(this);
+        sc.setLocation(btnEmotion.getLocationOnScreen().x - 150, (btnEmotion.getLocationOnScreen().y - 185));
         sc.setVisible(true);
     }//GEN-LAST:event_btnEmotionActionPerformed
 
@@ -299,17 +313,16 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 
     private void jTptxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTptxtInputKeyPressed
         // TODO add your handling code here:
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown())
-        {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown()) {
             send(jTptxtInput.getText());
         }
-        
+
     }//GEN-LAST:event_jTptxtInputKeyPressed
 
     public void send(String newChat) {
         // Lấy text từ ô input
         //String newChat = this.jTptxtInput.getText();
-        
+
         // Input có chữ mới gửi
         if (!newChat.equals("")) {
             // Clear ô input
@@ -322,13 +335,13 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             // Các form chat xài chung printWriter của FormMainClient để đẩy json đi
             this.printWriter.println(json);
             this.printWriter.flush();
-     */       
+             */
             // update bảng history
-           // updateTxtContent(this.user + ": " + newChat);
-           updateTxtContentSend( newChat);
+            // updateTxtContent(this.user + ": " + newChat);
+            updateTxtContentSend(newChat);
         }
     }
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEmotion;
@@ -336,6 +349,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private javax.swing.JButton btnSend;
     private javax.swing.JComboBox<String> cboFont;
     private javax.swing.JComboBox<String> cboSize;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTextPane jTextPaneContent;
@@ -344,7 +358,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private javax.swing.JToggleButton jtbtnItalic;
     private javax.swing.JToggleButton jtbtnUnderline;
     // End of variables declaration//GEN-END:variables
-    
+
     public void updateTxtContentSend(String newChat) {
 
 //    StyledDocument doc = (StyledDocument) jTptxtInput.getDocument();
@@ -355,40 +369,39 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 //    //StyleConstants.setBold(asNew, !StyleConstants.isBold(as));
 //    //doc.setCharacterAttributes(0, jTptxtInput.getSelectedText().length(), asNew, true);
 //    //String text = (StyleConstants.isBold(as) ? "Cancel Bold" : "Bold");
-
 //        
 //    appendToPane(jTextPaneContent, " " + this.user + ": ", Color.red, StyleConstants.ALIGN_LEFT, false, false);
 //    appendToPane(jTextPaneContent, newChat + "\n", Color.BLACK, StyleConstants.ALIGN_LEFT, isBold, isItalic);
 //       // jTextPaneContent.setText(newChat);
-
-        if(newChat.length()<1)
+        if (newChat.length() < 1) {
             return;
-            //String tmp=txtInput.getText();
-            //txtInput.setText("");
-            SimpleAttributeSet sas=new SimpleAttributeSet();
-            StyleConstants.setFontSize(sas, Integer.parseInt(cboSize.getSelectedItem().toString()));
-            StyleConstants.setForeground(sas,fontColor);
-            StyleConstants.setBold(sas, jtbtnBold.isSelected());
-            StyleConstants.setUnderline(sas, jtbtnUnderline.isSelected());
-            StyleConstants.setItalic(sas, jtbtnItalic.isSelected());
-            StyleConstants.setFontFamily(sas, cboFont.getSelectedItem().toString());
-            StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
-            Object sas1 = sas.toString();
-            Content ct = new Content(newChat, sas1);
-            // Tạo json
-            Request rq = new Request(RequestType.MESSAGE, this.user, this.friend);
-            rq.setContent(ct);
-            Object json = this.gson.toJson(rq);
+        }
+        //String tmp=txtInput.getText();
+        //txtInput.setText("");
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        StyleConstants.setFontSize(sas, Integer.parseInt(cboSize.getSelectedItem().toString()));
+        StyleConstants.setForeground(sas, fontColor);
+        StyleConstants.setBold(sas, jtbtnBold.isSelected());
+        StyleConstants.setUnderline(sas, jtbtnUnderline.isSelected());
+        StyleConstants.setItalic(sas, jtbtnItalic.isSelected());
+        StyleConstants.setFontFamily(sas, cboFont.getSelectedItem().toString());
+        StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+        Object sas1 = sas.toString();
+        Content ct = new Content(newChat, sas1);
+        // Tạo json
+        Request rq = new Request(RequestType.MESSAGE, this.user, this.friend);
+        rq.setContent(ct);
+        Object json = this.gson.toJson(rq);
         try {
             // Các form chat xài chung printWriter của FormMainClient để đẩy json đi
             this.printWriter.println(json);
             this.printWriter.flush();
         } catch (Exception ex) {
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
-            
-            displayTextSend(this.user, sas, newChat);
-            jTptxtInput.setText("");
+
+        displayTextSend(this.user, sas, newChat);
+        jTptxtInput.setText("");
 
     }
 
@@ -399,10 +412,10 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         StyleConstants.setFontSize(buffer, 12);
         StyleConstants.setForeground(buffer, Color.red);
         StyleConstants.setAlignment(buffer, StyleConstants.ALIGN_LEFT);
-        
+
         try {
-            jTextPaneContent.getStyledDocument().insertString(doc.getLength(), "\n" + user + ": " , buffer);
-           while (tmp.indexOf("<s>") > -1 && tmp.indexOf("</s>") > -1) {
+            jTextPaneContent.getStyledDocument().insertString(doc.getLength(), "\n" + user + ": ", buffer);
+            while (tmp.indexOf("<s>") > -1 && tmp.indexOf("</s>") > -1) {
 
                 jTextPaneContent.getStyledDocument().insertString(jTextPaneContent.getStyledDocument().getLength(), tmp.substring(0, tmp.indexOf("<s>")), sas);
                 tmp = tmp.substring(tmp.indexOf("<s>"));
@@ -418,7 +431,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                     tmp = tmp.substring(tmp.indexOf("</s>") + 5);
                 }
             }
-           StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+            StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
             //doc.setCharacterAttributes(0,doc.getLength(),sas,false);
             //jTextPaneContent.getStyledDocument().insertString(doc.getLength(), tmp, sas);
             int len = jTextPaneContent.getDocument().getLength();
@@ -426,13 +439,13 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             jTextPaneContent.setCharacterAttributes(sas, false);
             jTextPaneContent.setParagraphAttributes(sas, true);
             jTextPaneContent.replaceSelection(tmp);
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
 
     }
+
     private void displayTextReceive(String user, SimpleAttributeSet sas, String tmp) {
         StyledDocument doc = jTextPaneContent.getStyledDocument();
         SimpleAttributeSet buffer = new SimpleAttributeSet();
@@ -441,8 +454,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         StyleConstants.setForeground(buffer, Color.BLUE);
         StyleConstants.setAlignment(buffer, StyleConstants.ALIGN_RIGHT);
         try {
-            jTextPaneContent.getStyledDocument().insertString(doc.getLength(), "\n" + user + ": " , buffer);
-           while (tmp.indexOf("<s>") > -1 && tmp.indexOf("</s>") > -1) {
+            jTextPaneContent.getStyledDocument().insertString(doc.getLength(), "\n" + user + ": ", buffer);
+            while (tmp.indexOf("<s>") > -1 && tmp.indexOf("</s>") > -1) {
 
                 jTextPaneContent.getStyledDocument().insertString(jTextPaneContent.getStyledDocument().getLength(), tmp.substring(0, tmp.indexOf("<s>")), sas);
                 tmp = tmp.substring(tmp.indexOf("<s>"));
@@ -458,23 +471,20 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                     tmp = tmp.substring(tmp.indexOf("</s>") + 5);
                 }
             }
-           StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+            StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
             //jTextPaneContent.getStyledDocument().insertString(doc.getLength(), tmp, sas);
             int len = jTextPaneContent.getDocument().getLength();
             jTextPaneContent.setCaretPosition(len);
             jTextPaneContent.setCharacterAttributes(sas, false);
             jTextPaneContent.setParagraphAttributes(sas, true);
             jTextPaneContent.replaceSelection(tmp);
-           
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
 
     }
-    
-    
-    
+
     public void updateTxtContentReceive(Request rq) {
 
         //appendToPane(jTextPaneContent, msg.getUserSend() + ": ", Color.BLUE, StyleConstants.ALIGN_RIGHT, false, false);
@@ -483,32 +493,31 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         String tmp = rq.getContent().getSas().toString();
 
         String seg[] = tmp.split(" ");
-        String fontSize = seg[0].substring(seg[0].lastIndexOf("=") +1);
-        String foreground = seg[1].substring(seg[1].indexOf("=") +1);
-        String foregroundElement = foreground.substring(foreground.indexOf("[")+ 1, foreground.indexOf("]"));
-        
-        int red = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("=") +1, foregroundElement.indexOf(",")));
-        int green = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("g") +2, foregroundElement.indexOf("b") -1));
+        String fontSize = seg[0].substring(seg[0].lastIndexOf("=") + 1);
+        String foreground = seg[1].substring(seg[1].indexOf("=") + 1);
+        String foregroundElement = foreground.substring(foreground.indexOf("[") + 1, foreground.indexOf("]"));
+
+        int red = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("=") + 1, foregroundElement.indexOf(",")));
+        int green = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("g") + 2, foregroundElement.indexOf("b") - 1));
         int blue = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("b") + 2));
 
-        String bold = seg[2].substring(seg[2].indexOf("=") +1);
-        String underline = seg[3].substring(seg[3].indexOf("=") +1);
-        String italic = seg[4].substring(seg[4].indexOf("=") +1);
+        String bold = seg[2].substring(seg[2].indexOf("=") + 1);
+        String underline = seg[3].substring(seg[3].indexOf("=") + 1);
+        String italic = seg[4].substring(seg[4].indexOf("=") + 1);
 
-        String fontFamily = seg[5].substring(seg[5].indexOf("=") +1);
-        SimpleAttributeSet sas= new SimpleAttributeSet();
+        String fontFamily = seg[5].substring(seg[5].indexOf("=") + 1);
+        SimpleAttributeSet sas = new SimpleAttributeSet();
         StyleConstants.setFontSize(sas, Integer.parseInt(fontSize));
-        StyleConstants.setForeground(sas,new Color(red, green, blue));
+        StyleConstants.setForeground(sas, new Color(red, green, blue));
         StyleConstants.setBold(sas, (bold.contains("true")) ? true : false);
         StyleConstants.setUnderline(sas, (underline.contains("true")) ? true : false);
         StyleConstants.setItalic(sas, (italic.contains("true")) ? true : false);
         StyleConstants.setFontFamily(sas, fontFamily);
-        
+
         displayTextReceive(rq.getFromUser(), sas, rq.getContent().getContent());
     }
-    
-    private void appendToPane(JTextPane tp, String msg, Color c, int align, boolean isBold, boolean isItalic)
-    {
+
+    private void appendToPane(JTextPane tp, String msg, Color c, int align, boolean isBold, boolean isItalic) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
 
@@ -523,28 +532,23 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         tp.setParagraphAttributes(aset, true);
         tp.replaceSelection(msg);
         StyledDocument doc = jTptxtInput.getStyledDocument();
-        
+
     }
-    
-    
+
     public void run() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
     private void updatefont() {
         StyledDocument doc = jTptxtInput.getStyledDocument();
         SimpleAttributeSet sas = new SimpleAttributeSet();
         StyleConstants.setFontSize(sas, Integer.parseInt(cboSize.getSelectedItem().toString()));
-        StyleConstants.setForeground(sas,fontColor);
+        StyleConstants.setForeground(sas, fontColor);
         StyleConstants.setBold(sas, jtbtnBold.isSelected());
         StyleConstants.setUnderline(sas, jtbtnUnderline.isSelected());
         StyleConstants.setItalic(sas, jtbtnItalic.isSelected());
         StyleConstants.setFontFamily(sas, cboFont.getSelectedItem().toString());
         doc.setCharacterAttributes(0, doc.getLength(), sas, true);
     }
-
-
-
 
 }
