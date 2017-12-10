@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import database.DAO.ListfriendDAO;
 import database.DAO.LoginDAO;
+import database.DAO.tblUserDAO;
 import database.DAO.tblUserUserDAO;
 import database.Entities.Tbluser;
 import java.io.BufferedReader;
@@ -13,8 +14,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utilities.FileConverter;
 import utilities.Request;
 import utilities.RequestType;
@@ -76,20 +75,6 @@ public class ServerThread extends Thread {
         return this.loginStatus;
     }
 
-    // Báo trạng thái đăng nhập cho client
-    public void sendLoginResult() {
-        Request rq = new Request();
-        rq.setLogin(this.loginStatus);
-        rq.setType(RequestType.LOGIN);
-
-//        if (this.loginStatus) {
-//            rq.setAvatar(FileConverter.fileToString("images/cuong.jpg"));
-//        }
-        String json = gson.toJson(rq);
-        this.os.println(json);
-        this.os.flush();
-    }
-
     @Override
     public void run() {
         try {
@@ -133,6 +118,7 @@ public class ServerThread extends Thread {
                         ListfriendDAO listFriendDAO = new ListfriendDAO();
                         List<Tbluser> listTblUser = listFriendDAO.getListFriend(user);
                         ArrayList<UserSimple> listUserSimple = new ArrayList<>();
+                        // tbluser ko thể convert sang json, phải dùng UserSimple thay thế
                         for (Tbluser tbluser : listTblUser) {
                             if (hashMap.get(tbluser.getUserName()) != null) {
                                 listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true));
@@ -146,16 +132,14 @@ public class ServerThread extends Thread {
                     // Gửi kết quả đăng nhập về client
                     rqResponse.setLogin(this.loginStatus);
                     String json = gson.toJson(rqResponse);
-                    System.out.println(json);
                     this.os.println(json);
                     this.os.flush();
 
                     continue;
                 }
 
-                // Đẩy json cho client đích 
-                // Nếu ko phải kiểu đăng nhập thì đẩy đi
-                if (rq.getType() != RequestType.LOGIN) {
+                // Nếu là kiểu nhắn tin
+                if (rq.getType() == RequestType.MESSAGE) {
                     String friend = rq.getToUser();
 
                     System.out.println("server da nhan tn");
@@ -166,7 +150,22 @@ public class ServerThread extends Thread {
                         System.out.println("server gui tn");
 
                         // Lưu vào db
-                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 1);
+                    }
+                    continue;
+                }
+                
+                // Nếu là kiểu lấy thông tin bạn
+                if (rq.getType() == RequestType.GET_FRIEND_INFO) {
+                    tblUserDAO userDAO = new tblUserDAO();
+                    // Lấy ảnh bạn
+                    Tbluser userFriend = userDAO.findByName(rq.getToUser());                    
+                    rq.setAvatar(FileConverter.fileToString("images/" + userFriend.getAvartar()));
+                    String jsonResponse = gson.toJson(rq);
+                    
+                    // Gửi lại cho chính client gửi request thông tin của bạn hắn
+                    if (this.hashMap.get(rq.getFromUser()) != null) {
+                        this.hashMap.get(rq.getFromUser()).getOs().println(jsonResponse);
+                        this.hashMap.get(rq.getFromUser()).getOs().flush();
                     }
                 }
             }

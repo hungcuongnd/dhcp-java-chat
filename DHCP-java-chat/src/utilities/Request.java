@@ -17,7 +17,7 @@ public class Request {
     private boolean login = true;
     private String fullName;
     private ArrayList<UserSimple> listFriend;
-    private String avatar;
+    private String avatar = "";
 
     public Request() {
 

@@ -14,7 +14,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.Callable;
@@ -42,7 +41,7 @@ public class FormMainClient extends javax.swing.JFrame {
      */
     private String id;
     public String user = null;
-    private HashMap<String, FormChatPrivacy> hashMap = new HashMap<>();
+    private HashMap<String, FormChatPrivacy> friendHashMap = new HashMap<>();
     private PrintWriter os = null;
     private Gson gson = new Gson();
     private JList listFriend;
@@ -58,12 +57,6 @@ public class FormMainClient extends javax.swing.JFrame {
         this.formlogin.setLocationRelativeTo(null);
         this.formlogin.setVisible(true);
         // end create login form
-
-//        this.friends.add(new FriendEntry("cuong", "Hùng Cường", true));
-//        this.friends.add(new FriendEntry("duc", "Đình Đức", false));
-//        this.friends.add(new FriendEntry("hieu", "Trung Hiếu", false));
-//        this.friends.add(new FriendEntry("phuong", "Tri Phương", false));
-//        addListFriend();
 
         backgroundThread();
     }
@@ -247,7 +240,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 try {
                     // Gửi tin nhắn: gửi tại form chat                    
 
-                    // Nhận tin nhắn: nhận về json, trả về FormChat tương ứng với người gửi                    
+                    // Nhận dữ liệu từ server dạng json                
                     while (true) {
                         String json = is.readLine();
                         Request rq = gson.fromJson(json, Request.class);
@@ -263,12 +256,12 @@ public class FormMainClient extends javax.swing.JFrame {
 
                                 // server báo login thành công
                                 System.out.println("login thanh cong");
-                                                                                                
+
                                 // Đặt fullname & username
                                 if (user != null) {
                                     lblUser.setText(user);
                                 }
-                                
+
                                 // Lấy thông tin user
                                 String fullname = rq.getFullName();
                                 if (fullname != null && !fullname.isEmpty()) {
@@ -280,8 +273,8 @@ public class FormMainClient extends javax.swing.JFrame {
                                     lblAvatar.setIcon(FileConverter.stringToImage(rq.getAvatar()));
                                 } else {
                                     lblAvatar.setIcon(new ImageIcon("images/avatar-100.jpg"));
-                                }                
-                                
+                                }
+
                                 // Vẽ list bạn
                                 for (UserSimple user : rq.getListFriend()) {
                                     friends.add(new FriendEntry(user.getUser(), user.getFullName(), user.isOnline()));
@@ -294,15 +287,32 @@ public class FormMainClient extends javax.swing.JFrame {
                             continue;
                         }
 
-                        String userSend = rq.getFromUser();
-                        Object content = rq.getContent();
-
                         // Nếu là kiểu massage
                         if (rq.getType() == RequestType.MESSAGE) {
-                            hashMap.get(userSend).updateTxtContentReceive(rq);
-                        } else if (rq.getType() == RequestType.ASKFRIEND) {
+                            String userSend = rq.getFromUser();
+                            friendHashMap.get(userSend).updateTxtContentReceive(rq);
+                            continue;
+                        }
+
+                        // Nếu là kiểu yêu cầu kết bạn
+                        if (rq.getType() == RequestType.ASK_FRIEND) {
                             String newFriend = rq.getFromUser();
                             listModel.addElement(newFriend);
+                            continue;
+                        }
+
+                        // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
+                        if (rq.getType() == RequestType.GET_FRIEND_INFO) {
+                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+                            if (friendHashMap.get(rq.getToUser()) != null) {
+                                if (avatar != null) {
+                                    friendHashMap.get(rq.getToUser()).setAvatar(avatar);
+                                } else {
+                                    // Nhét ảnh mặc định vào FormChat
+                                    friendHashMap.get(rq.getToUser()).setAvatar(new ImageIcon("images/avatar-100.jpg"));
+                                }
+                            }
+                            continue;
                         }
 
                     }
@@ -381,18 +391,26 @@ public class FormMainClient extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
+    // Bắt sự kiện click vào list bạn
     private void listFriendMouseClicked(java.awt.event.MouseEvent evt) {
         if (evt.getClickCount() == 2) {
             FriendEntry entry = (FriendEntry) listFriend.getSelectedValue();
-            String friend = entry.getUser();
+            String friendUser = entry.getUser();
+            String friendName = entry.getFullName();
 
-            entry.setOnline(true);
-
-            if (this.hashMap.get(friend) == null) {
-                this.hashMap.put(friend, new FormChatPrivacy(this.user, friend, this.os));
-                this.hashMap.get(friend).setVisible(true);
+            if (this.friendHashMap.get(friendUser) == null) {
+                // Nếu trước đó chưa click
+                // Tạo mới FormChat với thằng bạn
+                this.friendHashMap.put(friendUser, new FormChatPrivacy(this.user, friendUser, friendName, this.os));
+                this.friendHashMap.get(friendUser).setVisible(true);
+                
+                // Gửi request lấy thông tin thằng bạn
+                Request rq = new Request(RequestType.GET_FRIEND_INFO, this.user, friendUser);
+                String json = gson.toJson(rq);
+                this.os.println(json);
+                this.os.flush();
             } else {
-                this.hashMap.get(friend).setVisible(true);
+                this.friendHashMap.get(friendUser).setVisible(true);
             }
         }
     }
@@ -465,7 +483,7 @@ class FriendEntry {
     public String getUser() {
         return user;
     }
-    
+
     public String getFullName() {
         return fullName;
     }

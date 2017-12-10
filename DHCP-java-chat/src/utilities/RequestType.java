@@ -13,11 +13,12 @@ public class RequestType {
     
     public final static int LOGIN = 0;
     public final static int STATUS = 1;
-    public final static int GETLIST = 2;
-    public final static int MESSAGE = 3;
-    public final static int ASKFRIEND = 4;
-    public final static int ACCEPTFRIEND = 5;
-    public final static int DELETEFRIEND = 6;
-    public final static int HISTORY = 7;
+    public final static int GET_FRIEND_LIST = 2;
+    public final static int GET_FRIEND_INFO = 3;
+    public final static int MESSAGE = 4;
+    public final static int ASK_FRIEND = 5;
+    public final static int ACCEPT_FRIEND = 6;
+    public final static int DELETE_FRIEND = 7;
+    public final static int HISTORY = 8;
     
 }

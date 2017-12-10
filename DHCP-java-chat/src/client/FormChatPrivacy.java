@@ -42,7 +42,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
      * Creates new form FormChatPrivacy1
      */
     private String user = null;
-    private String friend = null;
+    private String friendUser = "";
+    private String friendName = "";
     private String history = "";
     private PrintWriter printWriter = null;
     public String rootMsg = "";
@@ -59,9 +60,10 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     boolean hasIcon = false;
     ArrayList<Integer> array = new ArrayList<>();
 
-    public FormChatPrivacy(String user, String friend, PrintWriter printWriter) {
+    public FormChatPrivacy(String user, String friendUser, String friendName, PrintWriter printWriter) {
         this.user = user;
-        this.friend = friend;
+        this.friendUser = friendUser;
+        this.friendName = friendName;
         this.printWriter = printWriter;
 
         initComponents();
@@ -88,7 +90,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         cboFont.setModel(fontModel);
         cboFont.setSelectedItem("Arial");
 
-        this.setTitle(friend);
+        this.setTitle(this.friendName + " - " + this.friendUser);
 
         JMenuBar mnBar = new JMenuBar();
         JMenu file = new JMenu("File");
@@ -106,6 +108,11 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 
         mnBar.add(file);
         setJMenuBar(mnBar);
+    }
+    
+    // Đặt avatar
+    public void setAvatar(ImageIcon img) {
+        this.lblAvatar.setIcon(img);
     }
 
     /**
@@ -129,9 +136,9 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         jtbtnUnderline = new javax.swing.JToggleButton();
         btnFontColor = new javax.swing.JButton();
         btnEmotion = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        lblAvatar = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jScrollPane1.setViewportView(jTextPaneContent);
 
@@ -143,7 +150,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTptxtInput);
 
         btnSend.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        btnSend.setText("Send");
+        btnSend.setText("Gửi");
         btnSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSendActionPerformed(evt);
@@ -191,7 +198,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         });
 
         btnFontColor.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        btnFontColor.setText("Color");
+        btnFontColor.setText("Màu chữ");
         btnFontColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFontColorActionPerformed(evt);
@@ -205,8 +212,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("jLabel1");
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        lblAvatar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -216,24 +222,25 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnBold, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtbtnBold, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnItalic, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtbtnItalic, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbtnUnderline, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtbtnUnderline, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnFontColor)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAvatar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSend, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -243,13 +250,13 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnFontColor)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jtbtnUnderline)
-                        .addComponent(btnFontColor)
                         .addComponent(jtbtnItalic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jtbtnBold, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(cboFont, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -349,7 +356,6 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private javax.swing.JButton btnSend;
     private javax.swing.JComboBox<String> cboFont;
     private javax.swing.JComboBox<String> cboSize;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTextPane jTextPaneContent;
@@ -357,6 +363,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private javax.swing.JToggleButton jtbtnBold;
     private javax.swing.JToggleButton jtbtnItalic;
     private javax.swing.JToggleButton jtbtnUnderline;
+    private javax.swing.JLabel lblAvatar;
     // End of variables declaration//GEN-END:variables
 
     public void updateTxtContentSend(String newChat) {
@@ -389,7 +396,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         Object sas1 = sas.toString();
         Content ct = new Content(newChat, sas1);
         // Tạo json
-        Request rq = new Request(RequestType.MESSAGE, this.user, this.friend);
+        Request rq = new Request(RequestType.MESSAGE, this.user, this.friendUser);
         rq.setContent(ct);
         Object json = this.gson.toJson(rq);
         try {

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server;
 
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
@@ -25,7 +20,7 @@ public class FormMainServer extends javax.swing.JFrame {
      * Creates new form FormMainServer
      */
     public int totalConnection = 0;
-    private SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
     
     // Mảng hashMap quản lý các ServerThread, mỗi ServerThread có 1 socket phục vụ 1 client
     private HashMap<String, ServerThread> hashMap = new HashMap<>();
@@ -93,7 +88,7 @@ public class FormMainServer extends javax.swing.JFrame {
 
     public void updateTextArea(String newText) {
         Date now = new Date();
-        textArea.setText(textArea.getText() + this.df.format(now) + ": " + newText + "\n");
+        textArea.setText(textArea.getText() + this.dateFormat.format(now) + ": " + newText + "\n");
     }
 
     public void updateTotalConnection() {
