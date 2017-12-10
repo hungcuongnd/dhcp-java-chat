@@ -35,11 +35,11 @@ public class tblUserUserDAO {
     }
     
     
-    public List<TbluserUser> getAllMessage1v1(String username1, String username2){
+    public List<TbluserUser> getAllMessage1v1(String username1, String username2,int so){
         // lay tat ca cac tin nhan trong 1 cuoc hoi thoai 1 v 1
-        List<TbluserUser> list = em.createQuery("SELECT t FROM TbluserUser t WHERE (t.tbluserUserPK.userName1 = '"+
-                username1+"' AND t.tbluserUserPK.userName2 = '"+username2+"') OR (t.tbluserUserPK.userName1 = '"+
-                username2+"' AND t.tbluserUserPK.userName2 = '"+username1+"') ORDER BY t.tbluserUserPK.dateTime").getResultList();
+        List<TbluserUser> list = em.createNativeQuery("SELECT * FROM Tbluser_User t WHERE (t.user_name_1 = '"+
+                username1+"' AND t.user_name_2 = '"+username2+"') OR (t.user_name_1 = '"+
+                username2+"' AND t.user_name_2 = '"+username1+"') ORDER BY t.date_time DESC LIMIT "+so+",5",TbluserUser.class).getResultList();
         return list;
     }
     
