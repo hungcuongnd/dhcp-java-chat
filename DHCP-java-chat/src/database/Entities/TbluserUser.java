@@ -17,7 +17,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 
 /**
  *
@@ -43,6 +42,11 @@ public class TbluserUser implements Serializable {
     @Column(name = "status")
     private Short status;
 
+    @Lob
+    @Column(name = "sas")
+    private String sas;
+
+    
     @JoinColumn(name = "user_name_1", referencedColumnName = "user_name", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Tbluser tbluser;
@@ -53,11 +57,12 @@ public class TbluserUser implements Serializable {
     public TbluserUser() {
     }
 
-    public TbluserUser(TbluserUserPK tbluserUserPK, String content, Tbluser tbluser, Tbluser tbluser1) {
+    public TbluserUser(TbluserUserPK tbluserUserPK, String content, Tbluser tbluser, Tbluser tbluser1, String sas) {
         this.tbluserUserPK = tbluserUserPK;
         this.content = content;
         this.tbluser = tbluser;
         this.tbluser1 = tbluser1;
+        this.sas = sas;
     }
     
     
@@ -66,10 +71,11 @@ public class TbluserUser implements Serializable {
         this.tbluserUserPK = tbluserUserPK;
     }
 
-    public TbluserUser(String userName1, String userName2, Date dateTime, String content,Short status) {
+    public TbluserUser(String userName1, String userName2, Date dateTime, String content,Short status,String sas) {
         this.tbluserUserPK = new TbluserUserPK(userName1, userName2, dateTime);
         this.content = content;
         this.status = status;
+        this.sas = sas;
     }
 
     public TbluserUserPK getTbluserUserPK() {
@@ -94,6 +100,14 @@ public class TbluserUser implements Serializable {
 
     public void setStatus(Short status) {
         this.status = status;
+    }
+    
+    public String getSas() {
+        return sas;
+    }
+
+    public void setSas(String sas) {
+        this.sas = sas;
     }
 
     public Tbluser getTbluser() {

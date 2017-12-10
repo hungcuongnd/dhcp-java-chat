@@ -16,9 +16,11 @@ import java.util.List;
 public class test {
     public static void main(String[] args) {
         tblUserUserDAO u = new tblUserUserDAO();
-        List<TbluserUser> list = u.getAllMessage1v1("phuong", "hieu",5);
+        List<TbluserUser> list = u.getAllMessage1v1("phuong", "hieu",0);
         for (TbluserUser tbluserUser : list) {
             System.out.println(tbluserUser.getContent() + tbluserUser.getTbluserUserPK().getDateTime());
         }
+        
+        //u.saveMassage1v1("phuong", "hieu", "đm hiếu chó", 1, "string sas");
     }
 }

@@ -17,10 +17,10 @@ import javax.persistence.EntityManager;
 public class tblUserUserDAO {
     public EntityManager em = project2Utility.createConnect();
     
-    public void saveMassage1v1(String username1,String username2,String content,int status){
+    public void saveMassage1v1(String username1,String username2,String content,int status,String sas){
         //lay thoi diem hien tai luu vao
         java.util.Date time = new java.util.Date();
-        TbluserUser message = new TbluserUser(username1, username2, time, content,(short)status);
+        TbluserUser message = new TbluserUser(username1, username2, time, content,(short)status,sas);
         
         em.getTransaction().begin();
         em.persist(message);
