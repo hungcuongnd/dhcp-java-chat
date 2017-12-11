@@ -29,11 +29,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel1" max="32767" attributes="0"/>
           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
-          <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane3" pref="318" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
+          <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -42,54 +38,64 @@
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane3" pref="258" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jScrollPane3" min="-2" pref="289" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+            <EmptyBorder bottom="5" left="5" right="5" top="5"/>
+          </Border>
+        </Property>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+            <EmptyBorder bottom="5" left="5" right="5" top="5"/>
+          </Border>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblAvatar" min="-2" pref="102" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lblFullname" pref="210" max="32767" attributes="0"/>
-                      <Component id="lblUser" pref="210" max="32767" attributes="0"/>
-                      <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
-                      <Component id="lblUser1" alignment="1" pref="210" max="32767" attributes="0"/>
+                      <Component id="jTextField1" max="32767" attributes="0"/>
+                      <Component id="lblFullname" alignment="1" max="32767" attributes="0"/>
+                      <Component id="lblUser" alignment="1" max="32767" attributes="0"/>
+                      <Component id="lblUser1" alignment="1" pref="193" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="lblAvatar" min="-2" pref="102" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="lblFullname" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lblUser" min="-2" pref="21" max="-2" attributes="0"/>
+                          <Component id="lblFullname" min="-2" pref="19" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
+                          <Component id="lblUser" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="lblUser1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextField1" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="lblAvatar" min="-2" pref="102" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -112,7 +118,7 @@
         <Component class="javax.swing.JLabel" name="lblFullname">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="16" style="1"/>
+              <Font name="Dialog" size="14" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="fullname"/>
           </Properties>
@@ -120,7 +126,7 @@
         <Component class="javax.swing.JLabel" name="lblUser">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="16" style="1"/>
+              <Font name="Dialog" size="14" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="user"/>
           </Properties>
@@ -128,7 +134,7 @@
         <Component class="javax.swing.JLabel" name="lblUser1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="14" style="2"/>
+              <Font name="Dialog" size="13" style="2"/>
             </Property>
             <Property name="text" type="java.lang.String" value="H&#xf4;m nay b&#x1ea1;n th&#x1ebf; n&#xe0;o ?"/>
           </Properties>
@@ -144,16 +150,21 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel2">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+            <EmptyBorder bottom="0" left="5" right="5" top="0"/>
+          </Border>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="txtAddFriend" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnAddFriend" min="-2" pref="93" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="btnAddFriend" min="-2" pref="105" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -164,7 +175,7 @@
                       <Component id="txtAddFriend" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="btnAddFriend" alignment="3" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="0" pref="7" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -183,7 +194,7 @@
         <Component class="javax.swing.JButton" name="btnAddFriend">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="16" style="1"/>
+              <Font name="Dialog" size="14" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Add"/>
           </Properties>

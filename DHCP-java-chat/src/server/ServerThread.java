@@ -26,7 +26,9 @@ public class ServerThread extends Thread {
     BufferedReader is = null;
     PrintWriter os = null;
     public String id;
-    public LoginDAO loginDAO = new LoginDAO();
+    private LoginDAO loginDAO = new LoginDAO();
+    private ListfriendDAO listFriendDAO = new ListfriendDAO();
+    private List<Tbluser> listTblUser = null;
 
     // thành phần chính
     Socket s = null;
@@ -114,19 +116,26 @@ public class ServerThread extends Thread {
                         rqResponse.setFullName(userInfo.getFullName());
                         rqResponse.setAvatar(FileConverter.fileToString("images/" + userInfo.getAvartar()));
 
-                        // Lấy list bạn
-                        ListfriendDAO listFriendDAO = new ListfriendDAO();
-                        List<Tbluser> listTblUser = listFriendDAO.getListFriend(user);
-                        ArrayList<UserSimple> listUserSimple = new ArrayList<>();
+                        // Lấy list bạn                        
+                        this.listTblUser = listFriendDAO.getListFriend(user);
+                        
                         // tbluser ko thể convert sang json, phải dùng UserSimple thay thế
+                        ArrayList<UserSimple> listUserSimple = new ArrayList<>();
+                        
+                        // Kiểm tra từng đứa bạn có online ko, rồi gửi cho client để vẽ list bạn
                         for (Tbluser tbluser : listTblUser) {
                             if (hashMap.get(tbluser.getUserName()) != null) {
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true));
+                                // Nếu online
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true));                                                                
                             } else {
+                                // Nếu offline
                                 listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false));
                             }
                         }
                         rqResponse.setListFriend(listUserSimple);
+                        
+                        // Báo cho tất cả bạn bè biết nó đang online
+                        this.alertStatusToFriends(true);
                     }
 
                     // Gửi kết quả đăng nhập về client
@@ -190,16 +199,25 @@ public class ServerThread extends Thread {
                     s.close();
                 }
 
-                // Client thoát, xóa khỏi mảng hashMap
-                this.hashMap.remove(this.user);
+                
 
                 // Nếu trước đó đã đăng nhập, thì ghi log đăng xuất
                 if (isLogin()) {
+                    // xóa khỏi mảng hashMap
+                    this.hashMap.remove(this.user);
+                    
                     this.formMainServer.updateTextArea(this.user + " đăng xuất");
 
-                    // Khi client thoát, update lại total connection (giảm đi 1)
+                    // update lại total connection (giảm đi 1)
                     this.formMainServer.totalConnection--;
                     this.formMainServer.updateTotalConnection();
+                    
+                    // Thông báo cho bạn bè thằng client này biết nó đã đăng xuất
+                    this.alertStatusToFriends(false);
+                    
+                } else {
+                    // xóa khỏi mảng hashMap
+                    this.hashMap.remove(this.id);
                 }
 
             } catch (IOException ie) {
@@ -207,5 +225,25 @@ public class ServerThread extends Thread {
             }
         }//end finally
     }// end void run
+    
+    public void alertStatusToFriends(boolean status) {
+        // Lấy lại list bạn (ko tận dụng lại được listTblUser trước đó vì có thể đã thay đổi)
+        this.listTblUser = this.listFriendDAO.getListFriend(this.user);
+        
+        // Tạo request, user nhận để trống, tí điền
+        Request rq = new Request(RequestType.STATUS, this.user, null);
+        rq.setLogin(status);
+        
+        // Gửi cho từng đứa
+        for (Tbluser tbluser : this.listTblUser) {
+            String userFriend = tbluser.getUserName();
+            if (this.hashMap.get(userFriend) != null) {
+                rq.setToUser(userFriend);
+                String json = gson.toJson(rq);
+                this.hashMap.get(userFriend).getOs().println(json);
+                this.hashMap.get(userFriend).getOs().flush();
+            }
+        }        
+    }
 
 }

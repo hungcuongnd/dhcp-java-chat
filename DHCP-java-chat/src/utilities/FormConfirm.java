@@ -29,7 +29,7 @@ public class FormConfirm extends javax.swing.JFrame {
         
         // Cài đặt nội dung câu hỏi
         String content = "<html>";
-        content += "<div style=\"text-align: center; width: 300px;\">";
+        content += "<div style=\"text-align: center; width: 280px;\">";
         for (int i = 0; i < listText.size() && i < 4; i++) {
             content += "<p>" + listText.get(i) + "</p>";
         }
@@ -85,40 +85,36 @@ public class FormConfirm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        lblQuestion.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        lblQuestion.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblQuestion.setText("Nội dung câu hỏi (tối đa 4 dòng)");
 
-        btnOK.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        btnOK.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnOK.setText("Xác nhận");
 
-        btnCancel.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        btnCancel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnCancel.setText("Hủy bỏ");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(60, 60, 60)
-                .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addGap(65, 65, 65)
+                .addComponent(btnOK)
+                .addGap(56, 56, 56)
+                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(65, Short.MAX_VALUE))
+            .addComponent(lblQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(lblQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOK)
                     .addComponent(btnCancel))
-                .addGap(22, 22, 22))
+                .addGap(10, 10, 10))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
