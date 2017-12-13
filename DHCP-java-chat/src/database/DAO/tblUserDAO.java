@@ -20,7 +20,7 @@ public class tblUserDAO {
     public void createUser(Tbluser user){
         em.getTransaction().begin();
         em.persist(user);
-        em.getTransaction().commit();
+        em.getTransaction().commit();        
     }
     
     public Tbluser findByName(String username){

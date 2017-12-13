@@ -321,7 +321,6 @@ public class FormMainClient extends javax.swing.JFrame {
                             friendHashMap.get(userSend).updateTxtContentReceive(rq);
                             continue;
                         }
-
                         // Nếu là kiểu yêu cầu kết bạn
                         if (rq.getType() == RequestType.ASK_FRIEND) {
                             String newFriend = rq.getFromUser();
@@ -359,12 +358,12 @@ public class FormMainClient extends javax.swing.JFrame {
                             addListFriend();
                             continue;
                         }
-                        
+
                         // Nếu là kiểu server trả kết quả đổi avatar
                         if (rq.getType() == RequestType.CHANGE_AVATAR) {
                             ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
                             if (avatar != null) {
-                                lblAvatar.setIcon(avatar);                                
+                                lblAvatar.setIcon(avatar);
                             }
                         }
 
@@ -441,14 +440,14 @@ public class FormMainClient extends javax.swing.JFrame {
             JFileChooser fileChooser = new JFileChooser();
             FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif");
             fileChooser.setFileFilter(extensionFilter);
-            
+
             int result = fileChooser.showOpenDialog(new JFrame());
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 String absolutePath = selectedFile.getAbsolutePath();
                 String extension = absolutePath.substring(absolutePath.lastIndexOf("."));
                 extension = extension.replace(".", "");
-                
+
                 // Kiểm tra đúng file ảnh hay chưa
                 if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("gif")) {
                     // Gửi request đòi thay avatar
@@ -456,11 +455,11 @@ public class FormMainClient extends javax.swing.JFrame {
                     String imgString = FileConverter.fileToString(absolutePath);
                     rq.setAvatar(imgString);
                     rq.setExtension(extension);
-                    
+
                     String json = gson.toJson(rq);
                     this.os.println(json);
                     this.os.flush();
-                }                
+                }
             }
         }
     }//GEN-LAST:event_lblAvatarMouseClicked

@@ -12,6 +12,15 @@ public class Request {
     private String toUser;
     private String toGroup;
     private Content content;
+    private Tbluser user;
+
+    public Tbluser getUser() {
+        return user;
+    }
+
+    public void setUser(Tbluser user) {
+        this.user = user;
+    }
     public String id;
 
     private boolean login = true;
@@ -28,7 +37,6 @@ public class Request {
     public Request(int type, String fromUser, String toUser) {
         this.type = type;
         this.fromUser = fromUser;
-
         this.toUser = toUser;
     }
 

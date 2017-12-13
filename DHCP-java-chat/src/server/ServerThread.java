@@ -167,6 +167,14 @@ public class ServerThread extends Thread {
                     continue;
                 }
                 
+                // Đăng kí thành viên mới
+                if (rq.getType() == RequestType.REGISTER) {
+                    tblUserDAO userDAO = new tblUserDAO();
+                    Tbluser userGet = rq.getUser();
+                    userDAO.createUser(userGet);                    
+                    // cần một thông báo ở đây để trả lại client biết đăng kí ok hay không
+                    continue;
+                }
                 // Nếu là kiểu lấy thông tin bạn
                 if (rq.getType() == RequestType.GET_FRIEND_INFO) {
                     tblUserDAO userDAO = new tblUserDAO();
