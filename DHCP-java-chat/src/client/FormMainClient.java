@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -22,12 +25,14 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
 import utilities.FormConfirm;
 import utilities.Request;
@@ -94,7 +99,19 @@ public class FormMainClient extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         lblAvatar.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        lblAvatar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        lblAvatar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 2, true));
+        lblAvatar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblAvatar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblAvatarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblAvatarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblAvatarMouseExited(evt);
+            }
+        });
 
         lblFullname.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblFullname.setText("fullname");
@@ -117,13 +134,13 @@ public class FormMainClient extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextField1)
                     .addComponent(lblFullname, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)))
+                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +154,7 @@ public class FormMainClient extends javax.swing.JFrame {
                         .addComponent(lblUser1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 2, Short.MAX_VALUE))
         );
 
@@ -190,8 +207,8 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
         );
 
         pack();
@@ -278,6 +295,7 @@ public class FormMainClient extends javax.swing.JFrame {
                                 }
                                 addListFriend();
 
+                                // Hiện FormMainClient, ẩn FormLogin
                                 showForm();
                                 formlogin.setVisible(false);
                             }
@@ -287,6 +305,19 @@ public class FormMainClient extends javax.swing.JFrame {
                         // Nếu là kiểu massage
                         if (rq.getType() == RequestType.MESSAGE) {
                             String userSend = rq.getFromUser();
+
+                            // Nếu FormChat chưa từng được bật thì bật lên
+                            if (friendHashMap.get(userSend) == null) {
+                                for (Object friend : friends) {
+                                    FriendEntry fr = (FriendEntry) friend;
+                                    if (fr.getUser().equals(userSend)) {
+                                        showFormChat(userSend, fr.getFullName());
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // update lịch sử tin nhắn
                             friendHashMap.get(userSend).updateTxtContentReceive(rq);
                             continue;
                         }
@@ -311,23 +342,33 @@ public class FormMainClient extends javax.swing.JFrame {
                             }
                             continue;
                         }
-                        
+
                         // Nếu là kiểu thông báo trạng thái online
                         if (rq.getType() == RequestType.STATUS) {
                             // Xem là đứa nào & nó online hay offline
                             String userFriend = rq.getFromUser();
                             boolean stt = rq.isLogin();
-                            
+
                             for (Object friend : friends) {
                                 FriendEntry fr = (FriendEntry) friend;
                                 if (fr.getUser().equals(userFriend)) {
                                     fr.setOnline(stt);
+                                    break;
                                 }
                             }
                             addListFriend();
+                            continue;
+                        }
+                        
+                        // Nếu là kiểu server trả kết quả đổi avatar
+                        if (rq.getType() == RequestType.CHANGE_AVATAR) {
+                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+                            if (avatar != null) {
+                                lblAvatar.setIcon(avatar);                                
+                            }
                         }
 
-                    }
+                    } // end while(true)
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -394,13 +435,60 @@ public class FormMainClient extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_formWindowClosing
 
+    // Click đổi avatar
+    private void lblAvatarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAvatarMouseClicked
+        if (evt.getClickCount() == 2) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif");
+            fileChooser.setFileFilter(extensionFilter);
+            
+            int result = fileChooser.showOpenDialog(new JFrame());
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                String absolutePath = selectedFile.getAbsolutePath();
+                String extension = absolutePath.substring(absolutePath.lastIndexOf("."));
+                extension = extension.replace(".", "");
+                
+                // Kiểm tra đúng file ảnh hay chưa
+                if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("gif")) {
+                    // Gửi request đòi thay avatar
+                    Request rq = new Request(RequestType.CHANGE_AVATAR, this.user, null);
+                    String imgString = FileConverter.fileToString(absolutePath);
+                    rq.setAvatar(imgString);
+                    rq.setExtension(extension);
+                    
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                }                
+            }
+        }
+    }//GEN-LAST:event_lblAvatarMouseClicked
+
+    private void lblAvatarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAvatarMouseEntered
+        lblAvatar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 255, 0), 2, true));
+    }//GEN-LAST:event_lblAvatarMouseEntered
+
+    private void lblAvatarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAvatarMouseExited
+        lblAvatar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 2, true));
+    }//GEN-LAST:event_lblAvatarMouseExited
+
     public void exit() {
         System.exit(0);
     }
 
     public void showForm() {
         setVisible(true);
-        setLocationRelativeTo(null);
+
+        // Đặt vị trí FormMainClient sang bên phải màn hình
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        int formWidth = this.getWidth();
+        int formHeight = this.getHeight();
+
+        setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
     }
 
     // Bắt sự kiện click vào list bạn
@@ -409,21 +497,26 @@ public class FormMainClient extends javax.swing.JFrame {
             FriendEntry entry = (FriendEntry) listFriend.getSelectedValue();
             String friendUser = entry.getUser();
             String friendName = entry.getFullName();
+            showFormChat(friendUser, friendName);
+        }
+    }
 
-            if (this.friendHashMap.get(friendUser) == null) {
-                // Nếu trước đó chưa click
-                // Tạo mới FormChat với thằng bạn
-                this.friendHashMap.put(friendUser, new FormChatPrivacy(this.user, friendUser, friendName, this.os));
-                this.friendHashMap.get(friendUser).setVisible(true);
-                
-                // Gửi request lấy thông tin thằng bạn
-                Request rq = new Request(RequestType.GET_FRIEND_INFO, this.user, friendUser);
-                String json = gson.toJson(rq);
-                this.os.println(json);
-                this.os.flush();
-            } else {
-                this.friendHashMap.get(friendUser).setVisible(true);
-            }
+    // Bật FormChat với user đã chọn
+    private void showFormChat(String friendUser, String friendName) {
+        if (this.friendHashMap.get(friendUser) == null) {
+            // Nếu trước đó chưa click
+            // Tạo mới FormChat với thằng bạn
+            this.friendHashMap.put(friendUser, new FormChatPrivacy(this.user, friendUser, friendName, this.os));
+            this.friendHashMap.get(friendUser).setVisible(true);
+            this.friendHashMap.get(friendUser).setLocationRelativeTo(null);
+
+            // Gửi request lấy thông tin (ảnh) thằng bạn
+            Request rq = new Request(RequestType.GET_FRIEND_INFO, this.user, friendUser);
+            String json = gson.toJson(rq);
+            this.os.println(json);
+            this.os.flush();
+        } else {
+            this.friendHashMap.get(friendUser).setVisible(true);
         }
     }
 

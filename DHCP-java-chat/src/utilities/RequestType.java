@@ -20,5 +20,5 @@ public class RequestType {
     public final static int ACCEPT_FRIEND = 6;
     public final static int DELETE_FRIEND = 7;
     public final static int HISTORY = 8;
-    
+    public final static int CHANGE_AVATAR = 9;
 }

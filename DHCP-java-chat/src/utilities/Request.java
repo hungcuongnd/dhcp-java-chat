@@ -17,7 +17,9 @@ public class Request {
     private boolean login = true;
     private String fullName;
     private ArrayList<UserSimple> listFriend;
+
     private String avatar = "";
+    private String extension = "";
 
     public Request() {
 
@@ -108,6 +110,14 @@ public class Request {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     @Override

@@ -36,10 +36,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="jScrollPane3" min="-2" pref="289" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="jScrollPane3" pref="289" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -69,13 +69,13 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="lblAvatar" min="-2" pref="102" max="-2" attributes="0"/>
+                  <Component id="lblAvatar" min="-2" pref="104" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jTextField1" max="32767" attributes="0"/>
                       <Component id="lblFullname" alignment="1" max="32767" attributes="0"/>
                       <Component id="lblUser" alignment="1" max="32767" attributes="0"/>
-                      <Component id="lblUser1" alignment="1" pref="193" max="32767" attributes="0"/>
+                      <Component id="lblUser1" alignment="1" pref="191" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -93,7 +93,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jTextField1" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="lblAvatar" min="-2" pref="102" max="-2" attributes="0"/>
+                      <Component id="lblAvatar" min="-2" pref="104" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
               </Group>
@@ -108,12 +108,20 @@
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                <LineBorder roundedCorners="true">
+                <LineBorder roundedCorners="true" thickness="2">
                   <Color PropertyName="color" blue="99" green="99" red="99" type="rgb"/>
                 </LineBorder>
               </Border>
             </Property>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Hand Cursor"/>
+            </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblAvatarMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblAvatarMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblAvatarMouseExited"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblFullname">
           <Properties>

@@ -11,7 +11,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import utilities.FileConverter;
@@ -167,7 +171,7 @@ public class ServerThread extends Thread {
                 if (rq.getType() == RequestType.GET_FRIEND_INFO) {
                     tblUserDAO userDAO = new tblUserDAO();
                     // Lấy ảnh bạn
-                    Tbluser userFriend = userDAO.findByName(rq.getToUser());                    
+                    Tbluser userFriend = userDAO.findByName(rq.getToUser());
                     rq.setAvatar(FileConverter.fileToString("images/" + userFriend.getAvartar()));
                     String jsonResponse = gson.toJson(rq);
                     
@@ -176,6 +180,32 @@ public class ServerThread extends Thread {
                         this.hashMap.get(rq.getFromUser()).getOs().println(jsonResponse);
                         this.hashMap.get(rq.getFromUser()).getOs().flush();
                     }
+                    continue;
+                }
+                
+                // Nếu là kiểu đổi avatar
+                if (rq.getType() == RequestType.CHANGE_AVATAR) {
+                    // 1. Lưu ảnh và folde images
+                    // Lấy file ảnh
+                    byte[] decode = Base64.getDecoder().decode(rq.getAvatar());
+                    // Tạo tên file ảnh: user + extension
+                    String fileName = rq.getFromUser() + "." + rq.getExtension();
+                    Path path = Paths.get("images/" + fileName);
+                    Files.write(path, decode);
+                    
+                    // 2. Update db
+                    tblUserDAO userDAO = new tblUserDAO();
+                    Tbluser tblUser = userDAO.findByName(rq.getFromUser());
+                    tblUser.setAvartar(fileName);
+                    userDAO.updateUser(tblUser);
+                    
+                    // 3. Truyền lại avatar mới
+                    // Xài lại cái request vừa nhận
+                    rq.setAvatar(FileConverter.fileToString("images/" + fileName));
+                    String jsonResponse = gson.toJson(rq);
+                    this.os.println(jsonResponse);
+                    this.os.flush();
+                    continue;
                 }
             }
 
