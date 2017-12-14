@@ -17,20 +17,37 @@ import javax.persistence.EntityManager;
 public class tblUserDAO {
     public EntityManager em = project2Utility.createConnect();
     
-    public void createUser(Tbluser user){
+    public boolean createUser(Tbluser user) {
         em.getTransaction().begin();
-        em.persist(user);
-        em.getTransaction().commit();        
+        Tbluser userfind = em.find(Tbluser.class, user.getUserName());
+        em.getTransaction().commit();
+        if (userfind == null) {
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+            System.out.println("Tao User thanh cong");
+            return true;
+        } else {
+            System.out.println("Username da ton tai");
+            return false;
+        }
     }
+
     
     public Tbluser findByName(String username){
-        Tbluser user = em.createNamedQuery("Tbluser.findByUserName", Tbluser.class).setParameter("userName", username).getSingleResult();
+        em.getTransaction().begin();
+        Tbluser user = em.find(Tbluser.class, username);
+        em.remove(user);
         return user;
     }
     
     public List<Tbluser> findAll(){
-        List<Tbluser> list = em.createNamedQuery("Tbluser.findAll", Tbluser.class).getResultList();
-        return list;
+        try{
+            List<Tbluser> list = em.createNamedQuery("Tbluser.findAll", Tbluser.class).getResultList();
+            return list;
+        }catch(Exception e){
+            return null;
+        }
     }
     
     public void updateUser(Tbluser user){
