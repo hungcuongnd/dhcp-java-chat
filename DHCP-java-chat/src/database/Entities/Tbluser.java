@@ -64,6 +64,12 @@ public class Tbluser implements Serializable {
     public Tbluser(String userName) {
         this.userName = userName;
     }
+    
+    public Tbluser(String userName,String pass,String fullname) {
+        this.userName = userName;
+        this.fullName = fullname;
+        this.passWord = pass;
+    }
 
     public String getUserName() {
         return userName;
