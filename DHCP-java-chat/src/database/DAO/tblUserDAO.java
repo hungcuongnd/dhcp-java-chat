@@ -15,8 +15,9 @@ import javax.persistence.EntityManager;
  * @author Administrator
  */
 public class tblUserDAO {
+
     public EntityManager em = project2Utility.createConnect();
-    
+
     public boolean createUser(Tbluser user) {
         em.getTransaction().begin();
         Tbluser userfind = em.find(Tbluser.class, user.getUserName());
@@ -33,35 +34,42 @@ public class tblUserDAO {
         }
     }
 
-    
-    public Tbluser findByName(String username){
+    public Tbluser findByFullName(String target) {
+        try {
+            Tbluser user = em.createQuery("Select t from Tbluser t where t.userName like '%"+target+"%' OR t.fullName like '%"+target+"%'", Tbluser.class).getSingleResult();
+            return user;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Tbluser findByName(String username) {
         em.getTransaction().begin();
         Tbluser user = em.find(Tbluser.class, username);
         em.remove(user);
         return user;
     }
-    
-    public List<Tbluser> findAll(){
-        try{
+
+    public List<Tbluser> findAll() {
+        try {
             List<Tbluser> list = em.createNamedQuery("Tbluser.findAll", Tbluser.class).getResultList();
             return list;
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
-    
-    public void updateUser(Tbluser user){
+
+    public void updateUser(Tbluser user) {
         em.getTransaction().begin();
         em.merge(user);
         em.getTransaction().commit();
     }
-    
-    public void deleteUser(String username){
+
+    public void deleteUser(String username) {
         em.getTransaction().begin();
         Tbluser user = em.find(Tbluser.class, username);
         em.remove(user);
         em.getTransaction().commit();
     }
-    
-    
+
 }
