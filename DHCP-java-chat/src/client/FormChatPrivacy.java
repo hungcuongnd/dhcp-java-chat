@@ -114,6 +114,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         String json = this.gson.toJson(rq);
         this.printWriter.println(json);
         this.printWriter.flush();
+        
+        //DUCND
     }
     
     // Đặt avatar
