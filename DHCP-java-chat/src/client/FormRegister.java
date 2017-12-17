@@ -38,17 +38,12 @@ public class FormRegister extends javax.swing.JFrame {
     Socket sk = null;
     BufferedReader is = null;
 
-    public FormRegister(FormLogin formLogin) {
+    public FormRegister(FormMainClient formMainClient) {
         initComponents();
-        this.formLogin = formLogin;
-        this.formLogin.setVisible(false);
+        this.formMainClient = formMainClient;
+//        this.formMainClient.setVisible(false);
         this.setResizable(false);
     }
-
-    private FormRegister() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -232,8 +227,6 @@ public class FormRegister extends javax.swing.JFrame {
         try {
             address = InetAddress.getLocalHost();
             sk = new Socket(address, 6969);
-            is = new BufferedReader(new InputStreamReader(sk.getInputStream()));
-            os = new PrintWriter(sk.getOutputStream());
             Tbluser user = new Tbluser();
             user.setFullName(fullname);
             user.setPassWord(password);
@@ -242,46 +235,11 @@ public class FormRegister extends javax.swing.JFrame {
             Request rq = new Request(RequestType.REGISTER, null, null);
             rq.setUser(user);
             String json = this.gson.toJson(rq);
-            this.os.println(json);
-            this.os.flush();
+            this.formMainClient.getOS().print(json);
+            this.formMainClient.getOS().flush();
         } catch (UnknownHostException ex) {
             Logger.getLogger(FormRegister.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormRegister.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormRegister.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormRegister.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormRegister.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormRegister().setVisible(true);
-            }
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

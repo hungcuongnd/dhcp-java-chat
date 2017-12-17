@@ -154,7 +154,7 @@ public class FormLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        this.formRegister = new FormRegister(this);
+        this.formRegister = new FormRegister(formMainClient);
         this.formRegister.setLocationRelativeTo(null);
         this.formRegister.setVisible(true);        
     }//GEN-LAST:event_btnRegisterActionPerformed
