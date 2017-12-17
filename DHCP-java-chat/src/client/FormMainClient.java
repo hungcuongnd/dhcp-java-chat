@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -317,7 +318,9 @@ public class FormMainClient extends javax.swing.JFrame {
 
                                 // Đặt avatar có ảnh thì lấy ko thì lấy ảnh mặc định
                                 if (rq.getAvatar() != null && !rq.getAvatar().isEmpty()) {
-                                    lblAvatar.setIcon(FileConverter.stringToImage(rq.getAvatar()));
+                                    ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+                                    avatar = scaleImage(avatar);
+                                    lblAvatar.setIcon(avatar);
                                 } else {
                                     lblAvatar.setIcon(new ImageIcon("images/avatar-100.jpg"));
                                 }
@@ -366,6 +369,7 @@ public class FormMainClient extends javax.swing.JFrame {
                             ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
                             if (friendHashMap.get(rq.getToUser()) != null) {
                                 if (avatar != null) {
+                                    avatar = scaleImage(avatar);
                                     friendHashMap.get(rq.getToUser()).setAvatar(avatar);
                                 } else {
                                     // Nhét ảnh mặc định vào FormChat
@@ -396,6 +400,7 @@ public class FormMainClient extends javax.swing.JFrame {
                         if (rq.getType() == RequestType.CHANGE_AVATAR) {
                             ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
                             if (avatar != null) {
+                                avatar = scaleImage(avatar);
                                 lblAvatar.setIcon(avatar);
                             }
                         }
@@ -581,8 +586,6 @@ public class FormMainClient extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFullnameKeyPressed
 
-    
-
     public void exit() {
         System.exit(0);
     }
@@ -668,7 +671,28 @@ public class FormMainClient extends javax.swing.JFrame {
         });
     }
     
-    
+    // Hàm resize lại ảnh
+    public ImageIcon scaleImage(ImageIcon imgOld) {
+        if (imgOld == null) {
+            return null;
+        }
+        
+        int w = imgOld.getIconWidth();
+        int h = imgOld.getIconHeight();
+        int side = this.lblAvatar.getWidth();
+        
+        if (w <= h) {
+            h = side * h / w;
+            w = side;
+        } else {
+            w = side * w / h;
+            h = side;
+        }
+        
+        Image image = imgOld.getImage();
+        Image imgNew = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return new ImageIcon(imgNew);
+    }
 
     /**
      * @param args the command line arguments
