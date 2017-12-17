@@ -687,6 +687,10 @@ public class FormMainClient extends javax.swing.JFrame {
         Image imgNew = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
         return new ImageIcon(imgNew);
     }
+    
+    public void newDrawFriendList() {
+        // test in new branch
+    }
 
     /**
      * @param args the command line arguments
