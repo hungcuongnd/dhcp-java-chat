@@ -3,9 +3,11 @@ package server;
 import com.google.gson.Gson;
 import database.DAO.ListfriendDAO;
 import database.DAO.LoginDAO;
+import database.DAO.tblFriendDAO;
 import database.DAO.tblUserDAO;
 import database.DAO.tblUserUserDAO;
 import database.Entities.Tbluser;
+import database.Entities.TbluserUser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,6 +21,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import utilities.FileConverter;
+import utilities.HistoryChat;
 import utilities.Request;
 import utilities.RequestType;
 import utilities.UserSimple;
@@ -33,6 +36,7 @@ public class ServerThread extends Thread {
     private LoginDAO loginDAO = new LoginDAO();
     private ListfriendDAO listFriendDAO = new ListfriendDAO();
     private List<Tbluser> listTblUser = null;
+    private tblFriendDAO tblfriend = new tblFriendDAO();
 
     // thành phần chính
     Socket s = null;
@@ -163,6 +167,7 @@ public class ServerThread extends Thread {
                         System.out.println("server gui tn");
 
                         // Lưu vào db
+                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 0, rq.getContent().getSas().toString());
                     }
                     continue;
                 }
@@ -215,6 +220,74 @@ public class ServerThread extends Thread {
                     this.os.flush();
                     continue;
                 }
+
+                //Nếu là xóa friend thì xóa.
+                if(rq.getType() == RequestType.DELETE_FRIEND){
+                    tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser());
+                }
+                
+                //Nếu là đổi Fullname thì.
+                if(rq.getType() == RequestType.CHANGE_FULLNAME){
+                    tblUserDAO DAOuser = new tblUserDAO();
+                    Tbluser newuser = DAOuser.findByName(rq.getFromUser());
+                    newuser.setFullName(rq.getFullName());
+                    DAOuser.updateUser(newuser);
+                    newuser = DAOuser.findByName(rq.getFromUser());
+                    
+                    rq.setFullName(newuser.getFullName());
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                }
+                // Nếu là kiểu lấy lịch sử chat
+                if (rq.getType() == RequestType.HISTORY) {
+                    
+                    tblUserUserDAO userUserDAO = new tblUserUserDAO();
+                    List<TbluserUser> listChatHistory = userUserDAO.getAllMessage1v1(rq.getFromUser(), rq.getToUser(), rq.getLoadMessageNum());
+                    //loadNumber += 10;
+                    if(listChatHistory != null)
+                    {
+                        List<HistoryChat> historyChatList = new ArrayList<>();
+                        for (TbluserUser tbluserUser : listChatHistory) {
+                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
+                                //, tbluserUser.getTbluser1().getUserName()
+                                , tbluserUser.getContent()
+                                , tbluserUser.getStatus()
+                                , tbluserUser.getSas()));
+                        }
+                        rq.setChatHistory(historyChatList);
+                    }
+                }
+                    // Nếu là kiểu lấy lịch sử chat chua doc
+                if (rq.getType() == RequestType.UNREADMSG) {
+                    
+                    tblUserUserDAO userUserDAO1 = new tblUserUserDAO();
+                    List<TbluserUser> listChatHistoryUnRead = userUserDAO.checkUnreadMessage1v1(rq.getFromUser());
+                    //loadNumber += 10;
+                    if(listChatHistoryUnRead != null)
+                    {
+                        List<HistoryChat> historyChatList = new ArrayList<>();
+                        for (TbluserUser tbluserUser : listChatHistoryUnRead) {
+                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
+                                //, tbluserUser.getTbluser1().getUserName()
+                                , tbluserUser.getContent()
+                                , tbluserUser.getStatus()
+                                , tbluserUser.getSas()));
+                        }
+                        rq.setChatHistory(historyChatList);
+                    }
+                }
+                
+                 // 2. Update db
+                    
+                    
+                    // 3. Truyền lại lich su chat
+                    // Xài lại cái request vừa nhận
+                    
+                    String jsonResponse = gson.toJson(rq);
+                    this.os.println(jsonResponse);
+                    this.os.flush();
+                    continue;
             }
 
         } catch (IOException e) {

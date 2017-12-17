@@ -15,10 +15,11 @@ import javax.persistence.EntityManager;
  * @author Administrator
  */
 public class tblFriendDAO {
+
     public EntityManager em = project2Utility.createConnect();
-    
-    public void saveFriend(String username1, String username2){
-        
+
+    public void saveFriend(String username1, String username2) {
+
         //luu yeu cau ket ban voi mac dinh là chưa accept
         Short status = 0;
         Tblfriend friend = new Tblfriend(username1, username2, status);
@@ -26,27 +27,34 @@ public class tblFriendDAO {
         em.persist(friend);
         em.getTransaction().commit();
     }
-    
-    public List<Tblfriend> checkUnAcceptFriend(String username1){
+
+    public List<Tblfriend> checkUnAcceptFriend(String username1) {
         //kiem tra co yeu cau ket ban nao ko 
-        List<Tblfriend> list = em.createQuery("SELECT f FROM Tblfriend WHERE f.tblfriendPK.userName2 = '"+
-                username1+"' AND t.status = 0").getResultList();
-        return list;
+        try {
+            List<Tblfriend> list = em.createQuery("SELECT f FROM Tblfriend WHERE f.tblfriendPK.userName2 = '"
+                    + username1 + "' AND t.status = 0").getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
     }
-    
-    public void updateFriend(String username1, String username2,int status)
-    {
+
+    public void updateFriend(String username1, String username2, int status) {
         //update accept hay ko
-        Tblfriend friend = new Tblfriend(username1, username2, (short)status);
+        Tblfriend friend = new Tblfriend(username1, username2, (short) status);
         em.getTransaction().begin();
         em.merge(friend);
         em.getTransaction().commit();
     }
-    
-    public void deleteFriend(String username1, String username2){
+
+    public void deleteFriend(String username1, String username2) {
         //xoa yeu cau ket ban
-        em.getTransaction().begin();
-        em.createQuery("delete FROM Tblfriend t where t.tblfriendPK.userName1 = '"+username1+"' AND t.tblfriendPK.userName2 = '"+username2+"'").executeUpdate();
-        em.getTransaction().commit();
+        try {
+            em.getTransaction().begin();
+            em.createQuery("delete FROM Tblfriend t where t.tblfriendPK.userName1 = '" + username1 + "' AND t.tblfriendPK.userName2 = '" + username2 + "'").executeUpdate();
+            em.getTransaction().commit();
+        } catch (Exception e) {
+
+        }
     }
 }

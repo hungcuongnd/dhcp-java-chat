@@ -42,6 +42,7 @@ public class FormConfirm extends javax.swing.JFrame {
         this.btnOK.addActionListener((ActionEvent evt) -> {
             try {
                 confirmFunction.call();
+                this.hideFormConfirm();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -90,6 +91,11 @@ public class FormConfirm extends javax.swing.JFrame {
 
         btnOK.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnOK.setText("Xác nhận");
+        btnOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKActionPerformed(evt);
+            }
+        });
 
         btnCancel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnCancel.setText("Hủy bỏ");
@@ -130,6 +136,10 @@ public class FormConfirm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOKActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;

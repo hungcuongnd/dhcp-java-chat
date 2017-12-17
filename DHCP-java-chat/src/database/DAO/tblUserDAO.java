@@ -46,7 +46,7 @@ public class tblUserDAO {
     public Tbluser findByName(String username) {
         em.getTransaction().begin();
         Tbluser user = em.find(Tbluser.class, username);
-        em.remove(user);
+        em.getTransaction().commit();
         return user;
     }
 

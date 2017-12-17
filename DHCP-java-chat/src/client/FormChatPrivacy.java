@@ -18,17 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollBar;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import utilities.Content;
+import utilities.HistoryChat;
 import utilities.Request;
 import utilities.RequestType;
 
@@ -54,11 +58,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     JFrame parent;
     String tmp1 = "";
     int first = 0;
-    int len = 0;
-    int lenBefore = 0;
-    int lenAfter = 1;
-    boolean hasIcon = false;
-    ArrayList<Integer> array = new ArrayList<>();
+    private int loadNumber = 0;
 
     public FormChatPrivacy(String user, String friendUser, String friendName, PrintWriter printWriter) {
         this.user = user;
@@ -108,6 +108,14 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 
         mnBar.add(file);
         setJMenuBar(mnBar);
+        
+        // khi bat cua so len thi load 1 doan lich su chat
+        Request rq = new Request(RequestType.HISTORY, this.user, this.friendUser);
+        String json = this.gson.toJson(rq);
+        this.printWriter.println(json);
+        this.printWriter.flush();
+        
+        //DUCND
     }
     
     // Đặt avatar
@@ -146,6 +154,11 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 0, 0));
 
+        jScrollPane1.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                jScrollPane1MouseWheelMoved(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextPaneContent);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -371,6 +384,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
 
     private void btnFontColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFontColorActionPerformed
         // TODO add your handling code here:
+        fontColor = JColorChooser.showDialog(this, "Choose Font Color", Color.BLACK);
         updatefont();
     }//GEN-LAST:event_btnFontColorActionPerformed
 
@@ -387,6 +401,16 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jTptxtInputKeyPressed
+
+    private void jScrollPane1MouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jScrollPane1MouseWheelMoved
+        // TODO add your handling code here:
+        loadNumber += 10;
+        Request rq = new Request(RequestType.HISTORY, this.user, this.friendUser);
+        rq.setLoadMessageNum(loadNumber);
+        String json = this.gson.toJson(rq);
+        this.printWriter.println(json);
+        this.printWriter.flush();
+    }//GEN-LAST:event_jScrollPane1MouseWheelMoved
 
     public void send(String newChat) {
         // Lấy text từ ô input
@@ -422,7 +446,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTextPane jTextPaneContent;
     public javax.swing.JTextPane jTptxtInput;
@@ -623,5 +647,143 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         StyleConstants.setFontFamily(sas, cboFont.getSelectedItem().toString());
         doc.setCharacterAttributes(0, doc.getLength(), sas, true);
     }
+    
+    private SimpleAttributeSet convertToSAS(String sas1) {
+        String seg[] = sas1.split(" ");
+        String fontSize = seg[0].substring(seg[0].lastIndexOf("=") +1);
+        String foreground = seg[1].substring(seg[1].indexOf("=") +1);
+        String foregroundElement = foreground.substring(foreground.indexOf("[")+ 1, foreground.indexOf("]"));
+
+        int red = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("=") +1, foregroundElement.indexOf(",")));
+        int green = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("g") +2, foregroundElement.indexOf("b") -1));
+        int blue = Integer.parseInt(foregroundElement.substring(foregroundElement.indexOf("b") + 2));
+
+        String bold = seg[2].substring(seg[2].indexOf("=") +1);
+        String underline = seg[3].substring(seg[3].indexOf("=") +1);
+        String italic = seg[4].substring(seg[4].indexOf("=") +1);
+
+        String fontFamily = seg[5].substring(seg[5].indexOf("=") +1);
+        SimpleAttributeSet sas= new SimpleAttributeSet();
+        StyleConstants.setFontSize(sas, Integer.parseInt(fontSize));
+        StyleConstants.setForeground(sas,new Color(red, green, blue));
+        StyleConstants.setBold(sas, (bold.contains("true")) ? true : false);
+        StyleConstants.setUnderline(sas, (underline.contains("true")) ? true : false);
+        StyleConstants.setItalic(sas, (italic.contains("true")) ? true : false);
+        StyleConstants.setFontFamily(sas, fontFamily);
+        return sas;
+    }
+    
+    
+    
+    public void checkScrollBarReachTop(Request rq) {
+        JScrollBar sb = jScrollPane1.getVerticalScrollBar();
+         JViewport vp = jScrollPane1.getViewport();
+                if(sb.getValue() == sb.getMinimum()){
+                    try {
+                        System.out.println("top");                   
+                        
+                        //List<TbluserUser>list = userUserDAO.getAllMessage1v1(this.user, this.friendUser, loadNumber);
+                        
+                        List<HistoryChat> list = rq.getChatHistory();
+                        //loadNumber += 10;
+                        sb.setValue(sb.getMaximum()/6);
+                        for (int i = 0; i <= list.size() -1 ; i++) {
+                            
+                            //String userName = list.get(i).getTbluser().getUserName();
+                            String userName = list.get(i).getUserName();
+                            String content = list.get(i).getContent();
+                            String sas1 = list.get(i).getSas();
+                            //System.out.println(sas);
+                            SimpleAttributeSet sas = new SimpleAttributeSet();
+
+                                //if(sas == "");
+                                sas = convertToSAS(sas1);
+                                
+                                if(userName.contains(this.user))
+                                {
+                                    //displayTextSend(userName, sas, content);
+                                    SimpleAttributeSet buffer = new SimpleAttributeSet();
+                                    StyleConstants.setBold(buffer, true);
+                                    StyleConstants.setFontSize(buffer, 12);
+                                    StyleConstants.setForeground(buffer, Color.RED);
+                                    StyleConstants.setAlignment(buffer, StyleConstants.ALIGN_LEFT);
+                                    
+                                    while (content.indexOf("<s>") > -1 && content.indexOf("</s>") > -1) {
+
+                                            jTextPaneContent.getStyledDocument().insertString(jTextPaneContent.getStyledDocument().getLength(), content.substring(0, content.indexOf("<s>")), sas);
+                                            
+                                            content = content.substring(content.indexOf("<s>"));
+                                            
+                                            String imgName = content.substring(3, content.indexOf("</s>"));
+                                            
+                                            ImageIcon jl = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/image/" + imgName + ".gif")).getImage());
+                                            jTextPaneContent.setCaretPosition(0);
+                                            jTextPaneContent.insertIcon(jl);
+                                            content = content.substring(content.indexOf("</s>") + 4);
+
+                                        
+                                    }
+                                    StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+                                    
+                                    jTextPaneContent.setCaretPosition(0);
+                                    jTextPaneContent.setCharacterAttributes(sas, false);
+                                    jTextPaneContent.setParagraphAttributes(sas, true);
+                                    jTextPaneContent.replaceSelection(content);
+                                    
+                                    
+                                    jTextPaneContent.getStyledDocument().insertString(0, "\n" + userName + ": " , buffer);
+                                }
+                                if(userName.contains(this.friendUser))
+                                {
+                                    //displayTextReceive(userName, sas, content);
+                                    SimpleAttributeSet buffer = new SimpleAttributeSet();
+                                    StyleConstants.setBold(buffer, true);
+                                    StyleConstants.setFontSize(buffer, 12);
+                                    StyleConstants.setForeground(buffer, Color.BLUE);
+                                    StyleConstants.setAlignment(buffer, StyleConstants.ALIGN_RIGHT);
+                                    while (content.indexOf("<s>") > -1 && content.indexOf("</s>") > -1) {
+                                        
+
+                                            jTextPaneContent.getStyledDocument().insertString(jTextPaneContent.getStyledDocument().getLength(), content.substring(0, content.indexOf("<s>")), sas);
+                                            
+                                            content = content.substring(content.indexOf("<s>"));
+                                            
+                                            String imgName = content.substring(3, content.indexOf("</s>"));
+                                            
+                                            ImageIcon jl = new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/image/" + imgName + ".gif")).getImage());
+                                            jTextPaneContent.setCaretPosition(0);
+                                            jTextPaneContent.insertIcon(jl);
+                                            content = content.substring(content.indexOf("</s>") + 4);
+
+                                        
+                                    }
+                                    
+                                    StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+                                    jTextPaneContent.setCaretPosition(0);
+                                    
+                                    jTextPaneContent.setCharacterAttributes(sas, false);
+                                    jTextPaneContent.setParagraphAttributes(sas, true);
+                                    jTextPaneContent.replaceSelection(content);
+                                    jTextPaneContent.getStyledDocument().insertString(0, "\n" + userName + ": " , buffer);
+                                }
+
+                        }                        
+                        
+                    }catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+    }
+
+       public void checkUnreadMsg()
+       {
+           Request rq = new Request(RequestType.UNREADMSG, this.user, this.friendUser);
+         //Request rq = new Request(RequestType.HISTORY, this.user, this.friendUser);
+        //rq.setLoadMessageNum(loadNumber);
+        String json = this.gson.toJson(rq);
+        this.printWriter.println(json);
+        this.printWriter.flush();
+       }
 
 }

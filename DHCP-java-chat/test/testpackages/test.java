@@ -5,22 +5,26 @@
  */
 package testpackages;
 
+import database.DAO.tblFriendDAO;
+import database.DAO.tblUserDAO;
 import database.DAO.tblUserUserDAO;
+import database.Entities.Tbluser;
 import database.Entities.TbluserUser;
 import java.util.List;
+import java.util.Vector;
 
 /**
  *
  * @author Administrator
  */
 public class test {
+    
     public static void main(String[] args) {
-        tblUserUserDAO u = new tblUserUserDAO();
-        List<TbluserUser> list = u.getAllMessage1v1("phuong", "hieu",0);
-        for (TbluserUser tbluserUser : list) {
-            System.out.println(tbluserUser.getContent() + tbluserUser.getTbluserUserPK().getDateTime());
-        }
-        
-        //u.saveMassage1v1("phuong", "hieu", "đm hiếu chó", 1, "string sas");
+        tblUserDAO dao = new tblUserDAO();
+        Tbluser user1 = new Tbluser("phuong");
+        user1.setFullName("Lê Tri Phương");
+        dao.updateUser(user1);
     }
+    
+    
 }
