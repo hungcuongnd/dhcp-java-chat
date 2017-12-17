@@ -2,6 +2,7 @@ package utilities;
 
 import database.Entities.Tbluser;
 import java.util.ArrayList;
+import java.util.List;
 import utilities.Content;
 
 public class Request {
@@ -26,9 +27,10 @@ public class Request {
     private boolean login = true;
     private String fullName;
     private ArrayList<UserSimple> listFriend;
-
+    private List<HistoryChat> chatHistory;
     private String avatar = "";
     private String extension = "";
+    private int loadMessageNum;
 
     public Request() {
 
@@ -126,6 +128,22 @@ public class Request {
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+    
+    public List<HistoryChat> getChatHistory() {
+        return chatHistory;
+    }
+
+    public void setChatHistory(List<HistoryChat> chatHistory) {
+        this.chatHistory = chatHistory;
+    }
+
+    public int getLoadMessageNum() {
+        return loadMessageNum;
+    }
+
+    public void setLoadMessageNum(int loadMessageNum) {
+        this.loadMessageNum = loadMessageNum;
     }
 
     @Override

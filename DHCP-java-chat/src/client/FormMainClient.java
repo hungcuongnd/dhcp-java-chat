@@ -398,6 +398,32 @@ public class FormMainClient extends javax.swing.JFrame {
                         //Nếu trả về fullname
                         if(rq.getType() == RequestType.CHANGE_FULLNAME){
                             txtFullname.setText(rq.getFullName());
+                            continue;
+                        }
+                        // Nếu là kiểu lay lich su chat
+                        if (rq.getType() == RequestType.HISTORY) {
+                            
+                            //showFormChat(rq.getFromUser(), rq.getToUser());
+                            
+                            friendHashMap.get(rq.getToUser()).setVisible(true);
+                            friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
+
+                            // update lịch sử tin nhắn
+                            
+                            continue;
+                        }
+                        
+                        // Nếu là kiểu lay lich su chat
+                        if (rq.getType() == RequestType.UNREADMSG) {
+                            
+                            //showFormChat(rq.getFromUser(), rq.getToUser());
+                            if(rq.getChatHistory() != null)
+                            friendHashMap.get(rq.getToUser()).setVisible(true);
+                            friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
+
+                            // update lịch sử tin nhắn
+                            
+                            continue;
                         }
 
                     } // end while(true)
@@ -419,6 +445,7 @@ public class FormMainClient extends javax.swing.JFrame {
             }
         }).start();
     }
+          
     // end thread in background
 
 //    private void askFriend() {
