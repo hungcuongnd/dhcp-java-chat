@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import database.DAO.ListfriendDAO;
 import database.DAO.LoginDAO;
+import database.DAO.tblFriendDAO;
 import database.DAO.tblUserDAO;
 import database.DAO.tblUserUserDAO;
 import database.Entities.Tbluser;
@@ -33,6 +34,7 @@ public class ServerThread extends Thread {
     private LoginDAO loginDAO = new LoginDAO();
     private ListfriendDAO listFriendDAO = new ListfriendDAO();
     private List<Tbluser> listTblUser = null;
+    private tblFriendDAO tblfriend = new tblFriendDAO();
 
     // thành phần chính
     Socket s = null;
@@ -214,6 +216,25 @@ public class ServerThread extends Thread {
                     this.os.println(jsonResponse);
                     this.os.flush();
                     continue;
+                }
+                
+                //Nếu là xóa friend thì xóa.
+                if(rq.getType() == RequestType.DELETE_FRIEND){
+                    tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser());
+                }
+                
+                //Nếu là đổi Fullname thì.
+                if(rq.getType() == RequestType.CHANGE_FULLNAME){
+                    tblUserDAO DAOuser = new tblUserDAO();
+                    Tbluser newuser = DAOuser.findByName(rq.getFromUser());
+                    newuser.setFullName(rq.getFullName());
+                    DAOuser.updateUser(newuser);
+                    newuser = DAOuser.findByName(rq.getFromUser());
+                    
+                    rq.setFullName(newuser.getFullName());
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
                 }
             }
 

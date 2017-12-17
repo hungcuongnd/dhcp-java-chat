@@ -7,6 +7,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,12 +29,16 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
@@ -51,8 +59,10 @@ public class FormMainClient extends javax.swing.JFrame {
     private Gson gson = new Gson();
     private JList listFriend;
     DefaultListModel<String> listModel = new DefaultListModel<>();
-    private Vector friends = new Vector();
+    private Vector<FriendEntry> friends = new Vector();
     FormLogin formlogin;
+    FriendEntry tmp = null;
+    String friendToDel = null;
 
     public FormMainClient() {
         initComponents();
@@ -61,6 +71,7 @@ public class FormMainClient extends javax.swing.JFrame {
         this.formlogin = new FormLogin(this);
         this.formlogin.setLocationRelativeTo(null);
         this.formlogin.setVisible(true);
+        txtFullname.setBorder(null);
         // end create login form
 
         backgroundThread();
@@ -75,16 +86,19 @@ public class FormMainClient extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         lblAvatar = new javax.swing.JLabel();
-        lblFullname = new javax.swing.JLabel();
         lblUser = new javax.swing.JLabel();
         lblUser1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
+        txtFullname = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         txtAddFriend = new javax.swing.JTextField();
         btnAddFriend = new javax.swing.JButton();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("DHCP-chat");
@@ -113,9 +127,6 @@ public class FormMainClient extends javax.swing.JFrame {
             }
         });
 
-        lblFullname.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        lblFullname.setText("fullname");
-
         lblUser.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblUser.setText("user");
 
@@ -129,6 +140,22 @@ public class FormMainClient extends javax.swing.JFrame {
             }
         });
 
+        txtFullname.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtFullname.setOpaque(false);
+        txtFullname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFullnameActionPerformed(evt);
+            }
+        });
+        txtFullname.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtFullnameKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFullnameKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -138,16 +165,16 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextField1)
-                    .addComponent(lblFullname, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)))
+                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                    .addComponent(txtFullname)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -181,8 +208,9 @@ public class FormMainClient extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(txtAddFriend)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(btnAddFriend)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +218,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAddFriend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,7 +236,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
         );
 
         pack();
@@ -279,7 +307,7 @@ public class FormMainClient extends javax.swing.JFrame {
                                 // Lấy thông tin user
                                 String fullname = rq.getFullName();
                                 if (fullname != null && !fullname.isEmpty()) {
-                                    lblFullname.setText(fullname);
+                                    txtFullname.setText(fullname);
                                 }
 
                                 // Đặt avatar có ảnh thì lấy ko thì lấy ảnh mặc định
@@ -366,6 +394,11 @@ public class FormMainClient extends javax.swing.JFrame {
                                 lblAvatar.setIcon(avatar);
                             }
                         }
+                        
+                        //Nếu trả về fullname
+                        if(rq.getType() == RequestType.CHANGE_FULLNAME){
+                            txtFullname.setText(rq.getFullName());
+                        }
 
                     } // end while(true)
 
@@ -396,6 +429,35 @@ public class FormMainClient extends javax.swing.JFrame {
 //        os.flush();
 //        this.listModel.addElement(newFriend);
 //    }
+    public void delFriend(String username) {
+        tmp = null;
+        for (FriendEntry friend : friends) {
+            if (friend.getUser().equals(username)) {
+                tmp = friend;
+            }
+        }
+        if (tmp != null) {
+            addListFriend();
+            ArrayList<String> listText = new ArrayList<>();
+            listText.add("Bạn có thực sự muốn xóa " + tmp.getFullName() + " khỏi danh sách bạn?");
+
+            new FormConfirm(this, listText, new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    String delfriend = tmp.getUser();
+                    Request rqDelfriend = new Request(7, user, delfriend);
+                    String jsonDelFriend = gson.toJson(rqDelfriend);
+                    System.out.println(jsonDelFriend);
+                    os.println(jsonDelFriend);
+                    os.flush();
+                    friends.remove(tmp);
+                    return null;
+                }
+            });
+        }
+        //this.tmp = null;
+        txtAddFriend.setText("");
+    }
 
     private void txtAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddFriendActionPerformed
 //        this.askFriend();
@@ -403,8 +465,8 @@ public class FormMainClient extends javax.swing.JFrame {
 
     private void btnAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFriendActionPerformed
 //        this.askFriend();
-//        this.friends.add(new FriendEntry("huong ly", true));
-//        addListFriend();
+        this.friends.add(new FriendEntry("huong ly", "ly", true));
+        addListFriend();
     }//GEN-LAST:event_btnAddFriendActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -472,6 +534,23 @@ public class FormMainClient extends javax.swing.JFrame {
         lblAvatar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 2, true));
     }//GEN-LAST:event_lblAvatarMouseExited
 
+    private void txtFullnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFullnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFullnameActionPerformed
+
+    private void txtFullnameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFullnameKeyReleased
+        
+    }//GEN-LAST:event_txtFullnameKeyReleased
+
+    private void txtFullnameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFullnameKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown()) {
+            changeFullname(txtFullname.getText());
+            
+        }
+    }//GEN-LAST:event_txtFullnameKeyPressed
+
+    
+
     public void exit() {
         System.exit(0);
     }
@@ -489,14 +568,36 @@ public class FormMainClient extends javax.swing.JFrame {
 
         setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
     }
+    
+    public void changeFullname(String fullname){
+        Request rq = new Request(11, this.user, null);
+        rq.setFullName(fullname);
+        String json = gson.toJson(rq);
+        //System.out.println(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
 
     // Bắt sự kiện click vào list bạn
     private void listFriendMouseClicked(java.awt.event.MouseEvent evt) {
-        if (evt.getClickCount() == 2) {
-            FriendEntry entry = (FriendEntry) listFriend.getSelectedValue();
-            String friendUser = entry.getUser();
-            String friendName = entry.getFullName();
-            showFormChat(friendUser, friendName);
+        FriendEntry entry = (FriendEntry) listFriend.getSelectedValue();
+        if (entry != null) {
+            friendToDel = entry.getUser();
+            if (evt.getClickCount() == 2) {
+                String friendUser = entry.getUser();
+                String friendName = entry.getFullName();
+                showFormChat(friendUser, friendName);
+            }
+            if (SwingUtilities.isRightMouseButton(evt)) {
+                PopUpDemo menu = new PopUpDemo();
+                menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                menu.anItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        delFriend(friendToDel);
+                    }
+                });
+            }
         }
     }
 
@@ -534,6 +635,8 @@ public class FormMainClient extends javax.swing.JFrame {
             }
         });
     }
+    
+    
 
     /**
      * @param args the command line arguments
@@ -550,23 +653,29 @@ public class FormMainClient extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new FormMainClient();
+
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddFriend;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblAvatar;
-    private javax.swing.JLabel lblFullname;
     private javax.swing.JLabel lblUser;
     private javax.swing.JLabel lblUser1;
     private javax.swing.JTextField txtAddFriend;
+    private javax.swing.JTextField txtFullname;
     // End of variables declaration//GEN-END:variables
+
+    
+    
 }
+
 
 class FriendEntry {
 
@@ -583,6 +692,10 @@ class FriendEntry {
         this.user = user;
         this.fullName = fullName;
         this.online = online;
+    }
+
+    public FriendEntry(String user) {
+        this.user = user;
     }
 
     public String getUser() {
@@ -641,4 +754,15 @@ class FriendCellRenderer extends JLabel implements ListCellRenderer {
 
         return this;
     }
+}
+
+class PopUpDemo extends JPopupMenu {
+
+    JMenuItem anItem;
+
+    public PopUpDemo() {
+        anItem = new JMenuItem("DELETE");
+        add(anItem);
+    }
+
 }

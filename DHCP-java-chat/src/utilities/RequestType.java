@@ -22,4 +22,5 @@ public class RequestType {
     public final static int HISTORY = 8;
     public final static int CHANGE_AVATAR = 9;
     public final static int REGISTER = 10;
+    public final static int CHANGE_FULLNAME = 11;
 }

@@ -45,6 +45,8 @@ public class Tbluser implements Serializable {
     private String passWord;
     @Column(name = "avartar")
     private String avartar;
+    @Column(name = "slogan")
+    private String slogan;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tbluser")
     private Collection<Tblfriend> tblfriendCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tbluser1")
@@ -103,6 +105,15 @@ public class Tbluser implements Serializable {
         this.avartar = avartar;
     }
 
+    public String getSlogan() {
+        return slogan;
+    }
+
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
+    
     @XmlTransient
     public Collection<Tblfriend> getTblfriendCollection() {
         return tblfriendCollection;
