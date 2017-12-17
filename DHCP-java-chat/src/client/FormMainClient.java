@@ -63,10 +63,9 @@ public class FormMainClient extends javax.swing.JFrame {
     FormLogin formlogin;
     FriendEntry tmp = null;
     String friendToDel = null;
-
+    FormRegister formRegister;
     public FormMainClient() {
         initComponents();
-
         // create login form
         this.formlogin = new FormLogin(this);
         this.formlogin.setLocationRelativeTo(null);
@@ -286,6 +285,13 @@ public class FormMainClient extends javax.swing.JFrame {
                         String json = is.readLine();
                         Request rq = gson.fromJson(json, Request.class);
 
+                        if(rq.getType() == RequestType.REGISTER){
+                            if(rq.getIsIsRegisterSuccess()){
+                                formRegister.throwMessage(true);
+                            }else{
+                                formRegister.throwMessage(false);
+                            }
+                        }
                         // Nếu là kiểu đăng nhập
                         if (rq.getType() == RequestType.LOGIN) {
 

@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,8 +31,6 @@ public class FormRegister extends javax.swing.JFrame {
      * Creates new form FormRegister
      */
     FormMainClient formMainClient;
-    FormLogin formLogin;
-    tblUserDAO daoUser = new tblUserDAO();
     private Gson gson = new Gson();
     private PrintWriter os = null;
     InetAddress address = null;
@@ -77,47 +76,45 @@ public class FormRegister extends javax.swing.JFrame {
         jPanel1.setLayout(null);
         jPanel1.add(txtFullName);
         txtFullName.setBounds(80, 40, 390, 30);
-
-        txtRePassword.setPreferredSize(new java.awt.Dimension(6, 20));
         jPanel1.add(txtRePassword);
-        txtRePassword.setBounds(80, 270, 390, 30);
-
-        txtPassword.setPreferredSize(new java.awt.Dimension(6, 20));
+        txtRePassword.setBounds(80, 320, 390, 30);
         jPanel1.add(txtPassword);
-        txtPassword.setBounds(80, 190, 390, 30);
+        txtPassword.setBounds(80, 230, 390, 30);
         jPanel1.add(txtLoginName);
-        txtLoginName.setBounds(80, 110, 390, 30);
+        txtLoginName.setBounds(80, 140, 390, 30);
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 13)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("NHẬP LẠI MẬT KHẨU");
         jPanel1.add(jLabel1);
-        jLabel1.setBounds(80, 240, 150, 30);
+        jLabel1.setBounds(80, 290, 150, 30);
 
-        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("TÊN HIỂN THỊ");
         jPanel1.add(jLabel2);
         jLabel2.setBounds(80, 14, 150, 30);
 
-        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("TÊN ĐĂNG NHẬP");
         jPanel1.add(jLabel3);
-        jLabel3.setBounds(80, 84, 150, 30);
+        jLabel3.setBounds(80, 110, 150, 30);
 
-        jLabel4.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("MẬT KHẨU");
         jPanel1.add(jLabel4);
-        jLabel4.setBounds(80, 164, 150, 20);
+        jLabel4.setBounds(80, 200, 150, 20);
 
         cbAgree.setBackground(new java.awt.Color(102, 102, 102));
+        cbAgree.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         cbAgree.setForeground(new java.awt.Color(255, 255, 255));
         cbAgree.setText("Đồng ý với mọi điều khoản của chúng tôi (nếu có)");
         jPanel1.add(cbAgree);
-        cbAgree.setBounds(80, 330, 390, 30);
+        cbAgree.setBounds(80, 390, 390, 30);
 
+        btnRegisterSend.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         btnRegisterSend.setText("ĐĂNG KÍ");
         btnRegisterSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -125,46 +122,53 @@ public class FormRegister extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnRegisterSend);
-        btnRegisterSend.setBounds(80, 390, 110, 30);
+        btnRegisterSend.setBounds(80, 440, 110, 30);
 
+        btnReset.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         btnReset.setText("HỦY BỎ TẤT CẢ");
         jPanel1.add(btnReset);
-        btnReset.setBounds(200, 390, 120, 30);
+        btnReset.setBounds(200, 440, 120, 30);
 
+        btnBackToLogin.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         btnBackToLogin.setText("ĐĂNG NHẬP");
+        btnBackToLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackToLoginActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnBackToLogin);
-        btnBackToLogin.setBounds(330, 390, 140, 30);
+        btnBackToLogin.setBounds(330, 440, 140, 30);
 
-        msgFullName.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        msgFullName.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgFullName.setForeground(new java.awt.Color(255, 255, 255));
         jPanel1.add(msgFullName);
-        msgFullName.setBounds(480, 40, 390, 30);
+        msgFullName.setBounds(80, 70, 390, 30);
 
-        msgRePassword.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        msgRePassword.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgRePassword.setForeground(new java.awt.Color(255, 255, 255));
         jPanel1.add(msgRePassword);
-        msgRePassword.setBounds(480, 270, 400, 30);
+        msgRePassword.setBounds(80, 350, 400, 30);
 
-        msgPassword.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        msgPassword.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgPassword.setForeground(new java.awt.Color(255, 255, 255));
         jPanel1.add(msgPassword);
-        msgPassword.setBounds(480, 190, 400, 30);
+        msgPassword.setBounds(80, 260, 400, 30);
 
-        msgLoginName.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        msgLoginName.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         msgLoginName.setForeground(new java.awt.Color(255, 255, 255));
         jPanel1.add(msgLoginName);
-        msgLoginName.setBounds(480, 110, 400, 30);
+        msgLoginName.setBounds(80, 170, 400, 30);
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/register-background.jpg"))); // NOI18N
         jLabel5.setText("jLabel5");
         jPanel1.add(jLabel5);
-        jLabel5.setBounds(0, 0, 950, 500);
+        jLabel5.setBounds(0, 0, 560, 500);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 900, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -205,15 +209,22 @@ public class FormRegister extends javax.swing.JFrame {
                 msgRePassword.setText("Mật khẩu nhập lại không khớp");
                 canRegister = false;
             }
-        }
-        if (canRegister) {
+        }        
+        if (canRegister && cbAgree.isSelected()) {
             try {
                 registerUser(txtLoginName.getText(), txtFullName.getText(), String.valueOf(txtPassword.getPassword()));
             } catch (IOException ex) {
                 Logger.getLogger(FormRegister.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }else{
+            JOptionPane.showMessageDialog(this, "Bạn không đồng ý với điều khoản (nếu có) của chúng tôi", "Thông báo", JOptionPane.INFORMATION_MESSAGE); 
         }
     }//GEN-LAST:event_btnRegisterSendActionPerformed
+
+    private void btnBackToLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToLoginActionPerformed
+        this.formMainClient.formlogin.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnBackToLoginActionPerformed
     private boolean checkUsername() {
 
         return false;
@@ -226,22 +237,33 @@ public class FormRegister extends javax.swing.JFrame {
     private void registerUser(String username, String fullname, String password) throws IOException {
         try {
             address = InetAddress.getLocalHost();
-            sk = new Socket(address, 6969);
-            Tbluser user = new Tbluser();
-            user.setFullName(fullname);
-            user.setPassWord(password);
-            user.setUserName(username);
-            user.setAvartar("");
             Request rq = new Request(RequestType.REGISTER, null, null);
-            rq.setUser(user);
+            rq.setFullName(fullname);            
+            rq.setFromUser(username);
+            rq.setPassword(password);
             String json = this.gson.toJson(rq);
-            this.formMainClient.getOS().print(json);
+            this.formMainClient.getOS().println(json);
             this.formMainClient.getOS().flush();
         } catch (UnknownHostException ex) {
             Logger.getLogger(FormRegister.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void throwMessage(boolean status){
+        if(status){
+           JOptionPane.showMessageDialog(this, "Bạn đã đăng kí thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);  
+           msgFullName.setText("");
+           msgLoginName.setText("");
+           msgPassword.setText("");
+           msgRePassword.setText("");
+        }else{
+           JOptionPane.showMessageDialog(this, "Đăng kí thất bại", "Thông báo", JOptionPane.ERROR_MESSAGE);  
+           msgFullName.setText("");
+           msgLoginName.setText("");
+           msgPassword.setText("");
+           msgRePassword.setText("");
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackToLogin;
     private javax.swing.JButton btnRegisterSend;

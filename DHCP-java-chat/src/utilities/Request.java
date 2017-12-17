@@ -14,9 +14,17 @@ public class Request {
     private String toGroup;
     private Content content;
     private Tbluser user;
-
+    private boolean isRegisterSuccess;   
     public Tbluser getUser() {
         return user;
+    }
+
+    public boolean getIsIsRegisterSuccess() {
+        return isRegisterSuccess;
+    }
+
+    public void setIsRegisterSuccess(boolean isRegisterSuccess) {
+        this.isRegisterSuccess = isRegisterSuccess;
     }
 
     public void setUser(Tbluser user) {
