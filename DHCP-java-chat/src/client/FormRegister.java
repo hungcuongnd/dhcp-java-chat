@@ -30,6 +30,7 @@ public class FormRegister extends javax.swing.JFrame {
      * Creates new form FormRegister
      */
     FormMainClient formMainClient;
+    FormLogin formLogin;
     tblUserDAO daoUser = new tblUserDAO();
     private Gson gson = new Gson();
     private PrintWriter os = null;
@@ -37,9 +38,15 @@ public class FormRegister extends javax.swing.JFrame {
     Socket sk = null;
     BufferedReader is = null;
 
-    public FormRegister() {
+    public FormRegister(FormLogin formLogin) {
         initComponents();
+        this.formLogin = formLogin;
+        this.formLogin.setVisible(false);
         this.setResizable(false);
+    }
+
+    private FormRegister() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

@@ -62,7 +62,6 @@ public class FormMainClient extends javax.swing.JFrame {
         this.formlogin.setLocationRelativeTo(null);
         this.formlogin.setVisible(true);
         // end create login form
-
         backgroundThread();
     }
 

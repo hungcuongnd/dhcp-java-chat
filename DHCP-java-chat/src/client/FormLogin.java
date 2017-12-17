@@ -19,6 +19,7 @@ public class FormLogin extends javax.swing.JFrame {
      * Creates new form FormLogin
      */
     FormMainClient formMainClient;
+    FormRegister formRegister;
     private Gson gson = new Gson();
 
     public FormLogin(FormMainClient formMainClient) {
@@ -153,7 +154,9 @@ public class FormLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        // TODO add your handling code here:
+        this.formRegister = new FormRegister(this);
+        this.formRegister.setLocationRelativeTo(null);
+        this.formRegister.setVisible(true);        
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
