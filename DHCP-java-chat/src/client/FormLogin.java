@@ -19,7 +19,7 @@ public class FormLogin extends javax.swing.JFrame {
      * Creates new form FormLogin
      */
     FormMainClient formMainClient;
-    FormRegister formRegister;
+//    FormRegister formRegister;
     private Gson gson = new Gson();
 
     public FormLogin(FormMainClient formMainClient) {
@@ -53,13 +53,13 @@ public class FormLogin extends javax.swing.JFrame {
 
         jPanel1.setLayout(null);
 
-        lblUsername.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        lblUsername.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblUsername.setForeground(new java.awt.Color(255, 255, 255));
         lblUsername.setText("TÀI KHOẢN");
         jPanel1.add(lblUsername);
         lblUsername.setBounds(40, 30, 345, 23);
 
-        txtUsername.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        txtUsername.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         txtUsername.setText("cuong");
         txtUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -69,11 +69,11 @@ public class FormLogin extends javax.swing.JFrame {
         jPanel1.add(txtUsername);
         txtUsername.setBounds(40, 70, 380, 30);
 
-        lblPassword.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        lblPassword.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblPassword.setForeground(new java.awt.Color(255, 255, 255));
         lblPassword.setText("MẬT KHẨU");
         jPanel1.add(lblPassword);
-        lblPassword.setBounds(40, 120, 380, 17);
+        lblPassword.setBounds(40, 120, 380, 19);
 
         txtPassword.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         txtPassword.setText("1234");
@@ -85,10 +85,10 @@ public class FormLogin extends javax.swing.JFrame {
         jPanel1.add(txtPassword);
         txtPassword.setBounds(40, 160, 380, 30);
 
-        lblMsg.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        lblMsg.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
         lblMsg.setForeground(new java.awt.Color(255, 51, 51));
         jPanel1.add(lblMsg);
-        lblMsg.setBounds(50, 200, 228, 24);
+        lblMsg.setBounds(38, 200, 380, 24);
 
         btnLogin.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnLogin.setText("ĐĂNG NHẬP");
@@ -113,17 +113,19 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/login-background.png"))); // NOI18N
         jLabel1.setText("jLabel1");
         jPanel1.add(jLabel1);
-        jLabel1.setBounds(0, 0, 790, 370);
+        jLabel1.setBounds(0, 0, 480, 340);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -154,9 +156,9 @@ public class FormLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        this.formRegister = new FormRegister(formMainClient);
-        this.formRegister.setLocationRelativeTo(null);
-        this.formRegister.setVisible(true);        
+        this.formMainClient.formRegister = new FormRegister(formMainClient);
+        this.formMainClient.formRegister.setLocationRelativeTo(null);
+        this.formMainClient.formRegister.setVisible(true);        
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed

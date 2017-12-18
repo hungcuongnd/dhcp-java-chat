@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -61,38 +62,23 @@ public class FormMainClient extends javax.swing.JFrame {
     private JList listFriend;
     DefaultListModel<String> listModel = new DefaultListModel<>();
 
-//    oldcode
-//    private Vector<FriendEntry> friends = new Vector();
     FormLogin formlogin;
 
-//    oldcode
-//    FriendEntry tmp = null;
     String friendToDel = null;
 
     // var for list friend
     HashMap<String, PanelEntity> panelFriendMap = new HashMap<>();
     HashMap<Integer, PanelEntity> panelGroupMap = new HashMap<>();
 
+    FormRegister formRegister;
     public FormMainClient() {
         initComponents();
-
         // create login form
         this.formlogin = new FormLogin(this);
         this.formlogin.setLocationRelativeTo(null);
         this.formlogin.setVisible(true);
         txtFullname.setBorder(null);
         // end create login form
-
-        // test new friendlist
-//        JPanel pn1 = new JPanel();        
-//        drawPanelEntity(PANEL_FRIEND, pn1, "Hung Cuong", "cuong", true, 0);
-//        
-//        JPanel pn2 = new JPanel();
-//        drawPanelEntity(PANEL_GROUP, pn2, "DHCP", "4", true, 123);
-//        
-//        panelWrapper.remove(panelFriendMap.get("cuong"));
-//        panelWrapper.remove(panelGroupMap.get(123));
-        // end test new friendlist
         backgroundThread();
     }
 
@@ -312,6 +298,13 @@ public class FormMainClient extends javax.swing.JFrame {
                         String json = is.readLine();
                         Request rq = gson.fromJson(json, Request.class);
 
+                        if(rq.getType() == RequestType.REGISTER){
+                            if(rq.getIsIsRegisterSuccess()){
+                                formRegister.throwMessage(true);
+                            }else{
+                                formRegister.throwMessage(false);
+                            }
+                        }
                         // Nếu là kiểu đăng nhập
                         if (rq.getType() == RequestType.LOGIN) {
 

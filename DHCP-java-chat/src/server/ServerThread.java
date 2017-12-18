@@ -44,7 +44,7 @@ public class ServerThread extends Thread {
     HashMap<String, ServerThread> hashMap = null;
 
     boolean loginStatus = false;
-
+    boolean registerStatus = false;
     private tblUserUserDAO userUserDAO = new tblUserUserDAO();
 
     // thư viện hỗ trợ
@@ -85,6 +85,10 @@ public class ServerThread extends Thread {
         return this.loginStatus;
     }
 
+    public boolean isRegisterSucces() {
+        return this.registerStatus;
+    }
+    
     @Override
     public void run() {
         try {
@@ -174,9 +178,20 @@ public class ServerThread extends Thread {
                 
                 // Đăng kí thành viên mới
                 if (rq.getType() == RequestType.REGISTER) {
-                    tblUserDAO userDAO = new tblUserDAO();
-                    Tbluser userGet = rq.getUser();
-                    userDAO.createUser(userGet);                    
+                    tblUserDAO userDAO = new tblUserDAO();                    
+                    Tbluser userGet = new Tbluser();
+                    userGet.setUserName(rq.getFromUser());
+                    userGet.setFullName(rq.getFullName());
+                    userGet.setPassWord(rq.getPassword());
+                    userGet.setAvartar("");
+                    userGet.setSlogan("");
+                    this.registerStatus = userDAO.createUser(userGet);   
+                    Request rqResponse = new Request();
+                    rqResponse.setType(RequestType.REGISTER);
+                    rqResponse.setIsRegisterSuccess(this.registerStatus);
+                    String json = gson.toJson(rqResponse);
+                    this.os.println(json);
+                    this.os.flush();
                     // cần một thông báo ở đây để trả lại client biết đăng kí ok hay không
                     continue;
                 }
