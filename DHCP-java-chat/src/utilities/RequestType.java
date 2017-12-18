@@ -24,4 +24,5 @@ public class RequestType {
     public final static int REGISTER = 10;
     public final static int CHANGE_FULLNAME = 11;
     public final static int UNREADMSG = 12;
+    public final static int SEND_FILE = 13;
 }

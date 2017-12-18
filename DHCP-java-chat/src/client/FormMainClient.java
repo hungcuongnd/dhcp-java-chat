@@ -71,6 +71,7 @@ public class FormMainClient extends javax.swing.JFrame {
     HashMap<Integer, PanelEntity> panelGroupMap = new HashMap<>();
 
     FormRegister formRegister;
+
     public FormMainClient() {
         initComponents();
         // create login form
@@ -298,10 +299,10 @@ public class FormMainClient extends javax.swing.JFrame {
                         String json = is.readLine();
                         Request rq = gson.fromJson(json, Request.class);
 
-                        if(rq.getType() == RequestType.REGISTER){
-                            if(rq.getIsIsRegisterSuccess()){
+                        if (rq.getType() == RequestType.REGISTER) {
+                            if (rq.getIsIsRegisterSuccess()) {
                                 formRegister.throwMessage(true);
-                            }else{
+                            } else {
                                 formRegister.throwMessage(false);
                             }
                         }
@@ -405,6 +406,24 @@ public class FormMainClient extends javax.swing.JFrame {
                             }
                         }
 
+                        if (rq.getType() == RequestType.SEND_FILE) {
+//                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+//                            if (avatar != null) {
+//                                avatar = scaleImage(avatar);
+//                                lblAvatar.setIcon(avatar);
+//                            }
+                            String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
+                                    + "\n Ảnh sẽ tự động lưu tại D:\\";
+                            int dialogButton = JOptionPane.YES_NO_OPTION;
+                            int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
+                            if (dialogResult == 0) {
+                                System.out.println("Yes option");
+//                                String file = FileConverter(Frq.getAvatar());
+                            } else {
+                                System.out.println("No Option");
+                                
+                            }
+                        }
                         //Nếu trả về fullname
                         if (rq.getType() == RequestType.CHANGE_FULLNAME) {
                             txtFullname.setText(rq.getFullName());
