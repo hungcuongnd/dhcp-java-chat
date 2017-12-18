@@ -2,17 +2,10 @@ package client;
 
 import com.google.gson.Gson;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -23,24 +16,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
@@ -403,6 +389,7 @@ public class FormMainClient extends javax.swing.JFrame {
                             if (avatar != null) {
                                 avatar = scaleImage(avatar);
                                 lblAvatar.setIcon(avatar);
+                                new QuickPopup("Đổi avatar thành công");
                             }
                         }
 
