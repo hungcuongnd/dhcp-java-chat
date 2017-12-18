@@ -57,7 +57,7 @@ public class FormLogin extends javax.swing.JFrame {
         lblUsername.setForeground(new java.awt.Color(255, 255, 255));
         lblUsername.setText("TÀI KHOẢN");
         jPanel1.add(lblUsername);
-        lblUsername.setBounds(40, 30, 345, 23);
+        lblUsername.setBounds(40, 30, 380, 23);
 
         txtUsername.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         txtUsername.setText("cuong");
@@ -67,7 +67,7 @@ public class FormLogin extends javax.swing.JFrame {
             }
         });
         jPanel1.add(txtUsername);
-        txtUsername.setBounds(40, 70, 380, 30);
+        txtUsername.setBounds(40, 60, 380, 30);
 
         lblPassword.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblPassword.setForeground(new java.awt.Color(255, 255, 255));
@@ -83,14 +83,14 @@ public class FormLogin extends javax.swing.JFrame {
             }
         });
         jPanel1.add(txtPassword);
-        txtPassword.setBounds(40, 160, 380, 30);
+        txtPassword.setBounds(40, 150, 380, 30);
 
         lblMsg.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
         lblMsg.setForeground(new java.awt.Color(255, 51, 51));
         jPanel1.add(lblMsg);
         lblMsg.setBounds(38, 200, 380, 24);
 
-        btnLogin.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnLogin.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnLogin.setText("ĐĂNG NHẬP");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,7 +100,7 @@ public class FormLogin extends javax.swing.JFrame {
         jPanel1.add(btnLogin);
         btnLogin.setBounds(40, 250, 150, 40);
 
-        btnRegister.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnRegister.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnRegister.setText("ĐĂNG KÍ");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

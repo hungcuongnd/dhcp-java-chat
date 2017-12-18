@@ -83,8 +83,13 @@ public class FormConfirm extends javax.swing.JFrame {
         btnOK = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         lblQuestion.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblQuestion.setText("Nội dung câu hỏi (tối đa 4 dòng)");
@@ -140,6 +145,10 @@ public class FormConfirm extends javax.swing.JFrame {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnOKActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        hideFormConfirm();
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
