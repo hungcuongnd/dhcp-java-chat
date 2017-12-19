@@ -13,7 +13,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -25,6 +30,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -400,15 +406,19 @@ public class FormMainClient extends javax.swing.JFrame {
 //                                lblAvatar.setIcon(avatar);
 //                            }
                             String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
-                                    + "\n Ảnh sẽ tự động lưu tại D:\\";
+                                    + "\n Ảnh sẽ tự động lưu tại ổ đĩa D";
                             int dialogButton = JOptionPane.YES_NO_OPTION;
                             int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
                             if (dialogResult == 0) {
                                 System.out.println("Yes option");
-//                                String file = FileConverter(Frq.getAvatar());
+                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
+                                String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
+                                Path path = Paths.get("D:\\" + fileName);
+                                Files.write(path, decode);
                             } else {
                                 System.out.println("No Option");
-                                
+
                             }
                         }
                         //Nếu trả về fullname
