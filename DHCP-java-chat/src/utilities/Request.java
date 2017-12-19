@@ -14,7 +14,16 @@ public class Request {
     private String toGroup;
     private Content content;
     private Tbluser user;
-    private boolean isRegisterSuccess;   
+    private boolean isRegisterSuccess; 
+    private String stringOfFile;
+
+    public String getStringOfFile() {
+        return stringOfFile;
+    }
+
+    public void setStringOfFile(String stringOfFile) {
+        this.stringOfFile = stringOfFile;
+    }
     public Tbluser getUser() {
         return user;
     }
