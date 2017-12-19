@@ -25,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -57,6 +58,7 @@ public class FormMainClient extends javax.swing.JFrame {
     HashMap<Integer, PanelEntity> panelGroupMap = new HashMap<>();
 
     FormRegister formRegister;
+
     public FormMainClient() {
         initComponents();
         // create login form
@@ -65,6 +67,7 @@ public class FormMainClient extends javax.swing.JFrame {
         this.formlogin.setVisible(true);
         txtFullname.setBorder(null);
         // end create login form
+        
         backgroundThread();
     }
 
@@ -163,7 +166,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextField1)
                     .addComponent(lblUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtFullname)))
         );
         jPanel1Layout.setVerticalGroup(
@@ -204,7 +207,7 @@ public class FormMainClient extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(txtAddFriend)
+                .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnAddFriend)
                 .addContainerGap())
@@ -224,7 +227,7 @@ public class FormMainClient extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+            .addComponent(jScrollPane3)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -284,10 +287,10 @@ public class FormMainClient extends javax.swing.JFrame {
                         String json = is.readLine();
                         Request rq = gson.fromJson(json, Request.class);
 
-                        if(rq.getType() == RequestType.REGISTER){
-                            if(rq.getIsIsRegisterSuccess()){
+                        if (rq.getType() == RequestType.REGISTER) {
+                            if (rq.getIsIsRegisterSuccess()) {
                                 formRegister.throwMessage(true);
-                            }else{
+                            } else {
                                 formRegister.throwMessage(false);
                             }
                         }
@@ -392,6 +395,24 @@ public class FormMainClient extends javax.swing.JFrame {
                             }
                         }
 
+                        if (rq.getType() == RequestType.SEND_FILE) {
+//                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+//                            if (avatar != null) {
+//                                avatar = scaleImage(avatar);
+//                                lblAvatar.setIcon(avatar);
+//                            }
+                            String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
+                                    + "\n Ảnh sẽ tự động lưu tại D:\\";
+                            int dialogButton = JOptionPane.YES_NO_OPTION;
+                            int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
+                            if (dialogResult == 0) {
+                                System.out.println("Yes option");
+//                                String file = FileConverter(Frq.getAvatar());
+                            } else {
+                                System.out.println("No Option");
+                                
+                            }
+                        }
                         //Nếu trả về fullname
                         if (rq.getType() == RequestType.CHANGE_FULLNAME) {
                             txtFullname.setText(rq.getFullName());
@@ -559,6 +580,13 @@ public class FormMainClient extends javax.swing.JFrame {
         int formHeight = this.getHeight();
 
         setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
+        
+        // test search friend
+        SearchFrame sf = new SearchFrame();
+        
+        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
+        sf.setVisible(true);
+        // end test search friend
     }
 
     public void changeFullname(String fullname) {
