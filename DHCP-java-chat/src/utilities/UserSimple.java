@@ -48,4 +48,9 @@ public class UserSimple {
         this.online = online;
     }
 
+    @Override
+    public String toString() {
+        return fullName + " - " + user;
+    }
+
 }

@@ -14,31 +14,9 @@ public class Request {
     private String toGroup;
     private Content content;
     private Tbluser user;
-    private boolean isRegisterSuccess; 
+    private boolean isRegisterSuccess;
     private String stringOfFile;
 
-    public String getStringOfFile() {
-        return stringOfFile;
-    }
-
-    public void setStringOfFile(String stringOfFile) {
-        this.stringOfFile = stringOfFile;
-    }
-    public Tbluser getUser() {
-        return user;
-    }
-
-    public boolean getIsIsRegisterSuccess() {
-        return isRegisterSuccess;
-    }
-
-    public void setIsRegisterSuccess(boolean isRegisterSuccess) {
-        this.isRegisterSuccess = isRegisterSuccess;
-    }
-
-    public void setUser(Tbluser user) {
-        this.user = user;
-    }
     public String id;
 
     private boolean login = true;
@@ -48,6 +26,10 @@ public class Request {
     private String avatar = "";
     private String extension = "";
     private int loadMessageNum;
+
+    // for search friend
+    private String keyword;
+    // end for search friend
 
     public Request() {
 
@@ -146,7 +128,7 @@ public class Request {
     public void setExtension(String extension) {
         this.extension = extension;
     }
-    
+
     public List<HistoryChat> getChatHistory() {
         return chatHistory;
     }
@@ -161,6 +143,38 @@ public class Request {
 
     public void setLoadMessageNum(int loadMessageNum) {
         this.loadMessageNum = loadMessageNum;
+    }
+
+    public String getStringOfFile() {
+        return stringOfFile;
+    }
+
+    public void setStringOfFile(String stringOfFile) {
+        this.stringOfFile = stringOfFile;
+    }
+
+    public Tbluser getUser() {
+        return user;
+    }
+
+    public boolean getIsIsRegisterSuccess() {
+        return isRegisterSuccess;
+    }
+
+    public void setIsRegisterSuccess(boolean isRegisterSuccess) {
+        this.isRegisterSuccess = isRegisterSuccess;
+    }
+
+    public void setUser(Tbluser user) {
+        this.user = user;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     @Override

@@ -322,10 +322,8 @@ public class ServerThread extends Thread {
                         }
                         rq.setChatHistory(historyChatList);
                     }
-                }
-                
-                 // 2. Update db
                     
+                    // 2. Update db                    
                     
                     // 3. Truyền lại lich su chat
                     // Xài lại cái request vừa nhận
@@ -334,6 +332,26 @@ public class ServerThread extends Thread {
                     this.os.println(jsonResponse);
                     this.os.flush();
                     continue;
+                }
+                
+                // Nếu là kiểu search friend
+                if (rq.getType() == RequestType.GET_SEARCH_LIST) {
+                    // vào db lấy ra list user thỏa mãn từ khóa
+                    
+                    // trả lại kết quả cho client dạng List<UserSimple>
+                    ArrayList<UserSimple> searchList = new ArrayList<>();
+                    searchList.add(new UserSimple("cuong", "Hùng Cường", true));
+                    searchList.add(new UserSimple("duc", "Đình Đức", true));
+                    searchList.add(new UserSimple("phuong", "Tri Phương", true));
+                    
+                    rq.setListFriend(searchList);
+                    
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                    continue;
+                }
+                 
             }
 
         } catch (IOException e) {

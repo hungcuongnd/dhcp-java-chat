@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -23,11 +24,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
@@ -46,8 +47,6 @@ public class FormMainClient extends javax.swing.JFrame {
     private HashMap<String, FormChatPrivacy> friendHashMap = new HashMap<>();
     private PrintWriter os = null;
     private Gson gson = new Gson();
-    private JList listFriend;
-    DefaultListModel<String> listModel = new DefaultListModel<>();
 
     FormLogin formlogin;
 
@@ -59,15 +58,18 @@ public class FormMainClient extends javax.swing.JFrame {
 
     FormRegister formRegister;
 
+    // var for search friend
+    FormSearch formSearch = new FormSearch(this);
+    public DefaultListModel listModel = new DefaultListModel();
+    java.util.Timer timer = new java.util.Timer();
+
     public FormMainClient() {
         initComponents();
-        // create login form
-        this.formlogin = new FormLogin(this);
-        this.formlogin.setLocationRelativeTo(null);
-        this.formlogin.setVisible(true);
         txtFullname.setBorder(null);
-        // end create login form
-        
+
+        // for search box
+        this.formSearch.getList().setModel(listModel);
+        // end for search box
         backgroundThread();
     }
 
@@ -90,8 +92,8 @@ public class FormMainClient extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         txtFullname = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        txtAddFriend = new javax.swing.JTextField();
         btnAddFriend = new javax.swing.JButton();
+        txtAddFriend = new javax.swing.JTextField();
 
         jButton1.setText("jButton1");
 
@@ -187,18 +189,18 @@ public class FormMainClient extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
-        txtAddFriend.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
-        txtAddFriend.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtAddFriendActionPerformed(evt);
-            }
-        });
-
         btnAddFriend.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnAddFriend.setText("Add");
+        btnAddFriend.setText("Thêm");
         btnAddFriend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddFriendActionPerformed(evt);
+            }
+        });
+
+        txtAddFriend.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtAddFriend.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAddFriendKeyReleased(evt);
             }
         });
 
@@ -207,18 +209,14 @@ public class FormMainClient extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAddFriend)
-                .addContainerGap())
+                .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddFriend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 20, Short.MAX_VALUE))
+            .addComponent(txtAddFriend, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+            .addComponent(btnAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 32, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -236,7 +234,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
         );
 
         pack();
@@ -244,6 +242,12 @@ public class FormMainClient extends javax.swing.JFrame {
 
     public PrintWriter getOS() {
         return this.os;
+    }
+
+    public void initialFormLogin() {
+        this.formlogin = new FormLogin(this);
+        this.formlogin.setLocationRelativeTo(null);
+        this.formlogin.setVisible(true);
     }
 
 // begin thread in background
@@ -278,6 +282,8 @@ public class FormMainClient extends javax.swing.JFrame {
                 }
 
                 System.out.println("Client Address : " + address);
+                // Đảm bảo đã kết nối thì mới hiện FormLogin
+                initialFormLogin();
 
                 try {
                     // Gửi tin nhắn: gửi tại form chat                    
@@ -353,12 +359,6 @@ public class FormMainClient extends javax.swing.JFrame {
                             friendHashMap.get(userSend).updateTxtContentReceive(rq);
                             continue;
                         }
-                        // Nếu là kiểu yêu cầu kết bạn
-                        if (rq.getType() == RequestType.ASK_FRIEND) {
-                            String newFriend = rq.getFromUser();
-                            listModel.addElement(newFriend);
-                            continue;
-                        }
 
                         // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
                         if (rq.getType() == RequestType.GET_FRIEND_INFO) {
@@ -410,7 +410,7 @@ public class FormMainClient extends javax.swing.JFrame {
 //                                String file = FileConverter(Frq.getAvatar());
                             } else {
                                 System.out.println("No Option");
-                                
+
                             }
                         }
                         //Nếu trả về fullname
@@ -442,6 +442,28 @@ public class FormMainClient extends javax.swing.JFrame {
                             continue;
                         }
 
+                        // Nếu là kiểu search friend
+                        if (rq.getType() == RequestType.GET_SEARCH_LIST) {
+                            // Reset list
+                            listModel.removeAllElements();
+
+                            ArrayList<UserSimple> searchList = rq.getListFriend();
+                            for (UserSimple userSimple : searchList) {
+                                listModel.addElement(userSimple);
+                            }
+
+                            System.out.println(listModel.get(0));
+                            // Có kết quả mới show form search
+                            showFormSearch();
+                        }
+
+                        // Nếu là kiểu yêu cầu kết bạn
+                        if (rq.getType() == RequestType.ASK_FRIEND) {
+//                            String newFriend = rq.getFromUser();
+//                            listModel.addElement(newFriend);
+//                            continue;
+                        }
+
                     } // end while(true)
 
                 } catch (IOException e) {
@@ -462,20 +484,6 @@ public class FormMainClient extends javax.swing.JFrame {
         }).start();
     }
 
-    // end thread in background
-//    private void askFriend() {
-//        String newFriend = this.txtAddFriend.getText();
-//        Request rqAskFriend = new Request(this.user, newFriend, null, RequestType.ASKFRIEND, null);
-//        String jsonAskFriend = gson.toJson(rqAskFriend);
-//        os.println(jsonAskFriend);
-//        os.flush();
-//        this.listModel.addElement(newFriend);
-//    }    
-
-    private void txtAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddFriendActionPerformed
-//        this.askFriend();
-    }//GEN-LAST:event_txtAddFriendActionPerformed
-
     private void btnAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFriendActionPerformed
 
     }//GEN-LAST:event_btnAddFriendActionPerformed
@@ -495,7 +503,7 @@ public class FormMainClient extends javax.swing.JFrame {
 
 //        Tạo nội dung câu hỏi ArrayList
         ArrayList<String> listText = new ArrayList<>();
-        listText.add("Bạn có thực sự muốn thoát ?");
+        listText.add("Bạn muốn đăng xuất ?");
         listText.add("Bạn sẽ không thể gửi & nhận tin nhắn");
 
         new FormConfirm(this, listText, new Callable() {
@@ -511,7 +519,8 @@ public class FormMainClient extends javax.swing.JFrame {
     private void lblAvatarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAvatarMouseClicked
         if (evt.getClickCount() == 2) {
             JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif");
+            FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Image Files",
+                    "jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "gif", "GIF");
             fileChooser.setFileFilter(extensionFilter);
 
             int result = fileChooser.showOpenDialog(new JFrame());
@@ -522,7 +531,10 @@ public class FormMainClient extends javax.swing.JFrame {
                 extension = extension.replace(".", "");
 
                 // Kiểm tra đúng file ảnh hay chưa
-                if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("gif")) {
+                if (extension.equals("jpg") || extension.equals("JPG")
+                        || extension.equals("jpeg") || extension.equals("JPEG")
+                        || extension.equals("png") || extension.equals("PNG")
+                        || extension.equals("gif") || extension.equals("GIF")) {
                     // Gửi request đòi thay avatar
                     Request rq = new Request(RequestType.CHANGE_AVATAR, this.user, null);
                     String imgString = FileConverter.fileToString(absolutePath);
@@ -560,6 +572,59 @@ public class FormMainClient extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFullnameKeyPressed
 
+    // Sự kiện gõ phím txtAddFriend cho tìm kiếm bạn
+    private void txtAddFriendKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAddFriendKeyReleased
+        // clear any schedule before
+        this.timer.cancel();
+        this.timer.purge();
+
+        // get keyword from textfield, check null and make request
+        String keyword = txtAddFriend.getText();
+        if (keyword.equals("") || keyword == null) {
+            formSearch.setVisible(false);
+        } else {
+            this.timer = new java.util.Timer();
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    getSearchList(keyword);
+                }
+            }, 360);
+        }
+    }//GEN-LAST:event_txtAddFriendKeyReleased
+
+    // Hiện form search ngay dưới textfield
+    public void showFormSearch() {
+        int h = 34 + listModel.getSize() * 22;
+        if (h > 34 + 10 * 22) {
+            h = 34 + 10 * 22;
+        }
+        
+        formSearch.setSize(txtAddFriend.getWidth(), h);
+        formSearch.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
+        formSearch.setVisible(true);
+        formSearch.setFocusableWindowState(false);
+        txtAddFriend.requestFocus();
+        formSearch.setVisible(true);
+    }
+
+    // Gửi yêu cầu lấy list user theo từ khóa
+    public void getSearchList(String keyword) {
+        Request rq = new Request(RequestType.GET_SEARCH_LIST, this.user, null);
+        rq.setKeyword(keyword);
+        String json = gson.toJson(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
+
+    // Gửi yêu cầu kết bạn theo user
+    public void askFriend(String friendUser) {
+        Request rq = new Request(RequestType.ASK_FRIEND, this.user, friendUser);
+        String json = gson.toJson(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
+
     public void exit() {
         System.exit(0);
     }
@@ -580,13 +645,6 @@ public class FormMainClient extends javax.swing.JFrame {
         int formHeight = this.getHeight();
 
         setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
-        
-        // test search friend
-        SearchFrame sf = new SearchFrame();
-        
-        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
-        sf.setVisible(true);
-        // end test search friend
     }
 
     public void changeFullname(String fullname) {
@@ -701,6 +759,10 @@ public class FormMainClient extends javax.swing.JFrame {
 
     public HashMap<Integer, PanelEntity> getPanelGroupMap() {
         return panelGroupMap;
+    }
+
+    public JTextField getTxtAddFriend() {
+        return txtAddFriend;
     }
 
 }
