@@ -47,14 +47,15 @@ public class tblFriendDAO {
         em.getTransaction().commit();
     }
 
-    public void deleteFriend(String username1, String username2) {
+    public boolean deleteFriend(String username1, String username2) {
         //xoa yeu cau ket ban
         try {
             em.getTransaction().begin();
             em.createQuery("delete FROM Tblfriend t where t.tblfriendPK.userName1 = '" + username1 + "' AND t.tblfriendPK.userName2 = '" + username2 + "'").executeUpdate();
             em.getTransaction().commit();
+            return true;
         } catch (Exception e) {
-
+            return false;
         }
     }
 }

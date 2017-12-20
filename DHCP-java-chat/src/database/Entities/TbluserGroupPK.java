@@ -6,9 +6,12 @@
 package database.Entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -23,13 +26,18 @@ public class TbluserGroupPK implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_name")
     private String userName;
+    @Basic(optional = false)
+    @Column(name = "date_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateTime;
 
     public TbluserGroupPK() {
     }
 
-    public TbluserGroupPK(int groupId, String userName) {
+    public TbluserGroupPK(int groupId, String userName, Date dateTime) {
         this.groupId = groupId;
         this.userName = userName;
+        this.dateTime = dateTime;
     }
 
     public int getGroupId() {
@@ -48,11 +56,20 @@ public class TbluserGroupPK implements Serializable {
         this.userName = userName;
     }
 
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date dateTime) {
+        this.dateTime = dateTime;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) groupId;
         hash += (userName != null ? userName.hashCode() : 0);
+        hash += (dateTime != null ? dateTime.hashCode() : 0);
         return hash;
     }
 
@@ -69,12 +86,15 @@ public class TbluserGroupPK implements Serializable {
         if ((this.userName == null && other.userName != null) || (this.userName != null && !this.userName.equals(other.userName))) {
             return false;
         }
+        if ((this.dateTime == null && other.dateTime != null) || (this.dateTime != null && !this.dateTime.equals(other.dateTime))) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "database.Entities.TbluserGroupPK[ groupId=" + groupId + ", userName=" + userName + " ]";
+        return "database.Entities.TbluserGroupPK[ groupId=" + groupId + ", userName=" + userName + ", dateTime=" + dateTime + " ]";
     }
     
 }

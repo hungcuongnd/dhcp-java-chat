@@ -15,7 +15,9 @@ public class Request {
     private Content content;
     private Tbluser user;
     private boolean isRegisterSuccess; 
+    private boolean isDeletedFriend;
     private String stringOfFile;
+    private String slogan;
 
     public String getStringOfFile() {
         return stringOfFile;
@@ -107,10 +109,29 @@ public class Request {
         this.content = content;
     }
 
+    public boolean isIsDeletedFriend() {
+        return isDeletedFriend;
+    }
+
+    public void setIsDeletedFriend(boolean isDeletedFriend) {
+        this.isDeletedFriend = isDeletedFriend;
+    }
+    
+    
+
     public boolean isLogin() {
         return login;
     }
 
+    public String getSlogan() {
+        return slogan;
+    }
+
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
+    
     public void setLogin(boolean login) {
         this.login = login;
     }

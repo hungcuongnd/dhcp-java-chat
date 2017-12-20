@@ -127,6 +127,7 @@ public class ServerThread extends Thread {
 
                         // Cài đặt thông tin user tìm thấy cho rqResponse
                         rqResponse.setFullName(userInfo.getFullName());
+                        rqResponse.setSlogan(userInfo.getSlogan());
                         rqResponse.setAvatar(FileConverter.fileToString("images/" + userInfo.getAvartar()));
 
                         // Lấy list bạn                        
@@ -269,7 +270,13 @@ public class ServerThread extends Thread {
 
                 //Nếu là xóa friend thì xóa.
                 if(rq.getType() == RequestType.DELETE_FRIEND){
-                    tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser());
+                    //if(tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser())){
+                        rq.setIsDeletedFriend(true);
+                        String jsonResponse = gson.toJson(rq);
+                        this.os.println(jsonResponse);
+                        this.os.flush();
+                        continue;
+                    //}
                 }
                 
                 //Nếu là đổi Fullname thì.
@@ -285,6 +292,21 @@ public class ServerThread extends Thread {
                     this.os.println(json);
                     this.os.flush();
                 }
+                
+                if(rq.getType() == RequestType.CHANGE_SLOGAN){
+                    tblUserDAO DAOuser = new tblUserDAO();
+                    Tbluser newuser = DAOuser.findByName(rq.getFromUser());
+                    newuser.setSlogan(rq.getSlogan());
+                    DAOuser.updateUser(newuser);
+                    newuser = DAOuser.findByName(rq.getFromUser());
+                    
+                    rq.setSlogan(newuser.getSlogan());
+                    System.out.println(newuser.getSlogan());
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                }
+                
                 // Nếu là kiểu lấy lịch sử chat
                 if (rq.getType() == RequestType.HISTORY) {
                     
