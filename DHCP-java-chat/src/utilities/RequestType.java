@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -25,4 +26,5 @@ public class RequestType {
     public final static int CHANGE_FULLNAME = 11;
     public final static int UNREADMSG = 12;
     public final static int SEND_FILE = 13;
+    public final static int CHANGE_SLOGAN = 14;
 }

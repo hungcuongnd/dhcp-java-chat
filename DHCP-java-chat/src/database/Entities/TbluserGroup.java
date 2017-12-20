@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,18 +28,15 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TbluserGroup.findAll", query = "SELECT t FROM TbluserGroup t")
     , @NamedQuery(name = "TbluserGroup.findByGroupId", query = "SELECT t FROM TbluserGroup t WHERE t.tbluserGroupPK.groupId = :groupId")
     , @NamedQuery(name = "TbluserGroup.findByUserName", query = "SELECT t FROM TbluserGroup t WHERE t.tbluserGroupPK.userName = :userName")
-    , @NamedQuery(name = "TbluserGroup.findByDateTime", query = "SELECT t FROM TbluserGroup t WHERE t.dateTime = :dateTime")})
+    , @NamedQuery(name = "TbluserGroup.findByDateTime", query = "SELECT t FROM TbluserGroup t WHERE t.tbluserGroupPK.dateTime = :dateTime")
+    , @NamedQuery(name = "TbluserGroup.findByContent", query = "SELECT t FROM TbluserGroup t WHERE t.content = :content")})
 public class TbluserGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected TbluserGroupPK tbluserGroupPK;
-    
     @Column(name = "content")
     private String content;
-    @Column(name = "date_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateTime;
     @JoinColumn(name = "user_name", referencedColumnName = "user_name", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Tbluser tbluser;
@@ -56,9 +51,9 @@ public class TbluserGroup implements Serializable {
         this.tbluserGroupPK = tbluserGroupPK;
     }
 
-    public TbluserGroup(int groupId, String userName,String content) {
-        this.tbluserGroupPK = new TbluserGroupPK(groupId, userName);
-        this.content = content;
+    public TbluserGroup(int groupId, String userName, Date dateTime, String content) {
+        this.tbluserGroupPK = new TbluserGroupPK(groupId, userName, dateTime);
+        this.content= content;
     }
 
     public TbluserGroupPK getTbluserGroupPK() {
@@ -75,14 +70,6 @@ public class TbluserGroup implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Date getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
     }
 
     public Tbluser getTbluser() {
@@ -123,7 +110,7 @@ public class TbluserGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "Entities.TbluserGroup[ tbluserGroupPK=" + tbluserGroupPK + " ]";
+        return "database.Entities.TbluserGroup[ tbluserGroupPK=" + tbluserGroupPK + " ]";
     }
     
 }

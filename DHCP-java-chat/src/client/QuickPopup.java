@@ -38,7 +38,7 @@ public class QuickPopup extends javax.swing.JFrame {
         int formHeight = this.getHeight();
         this.setLocation((screenWidth - formWidth) * 98 / 100, (screenHeight - formHeight) * 93 / 100);
 
-        timerAnimateHide = new javax.swing.Timer(75, new ActionListener() {
+        timerAnimateHide = new javax.swing.Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (x >= 0) {

@@ -30,9 +30,8 @@ public class tblGroupDAO {
         em.getTransaction().commit();
         
         //luu bang trung gian voi loi nhan tạm
-        TbluserGroup usergroup = new TbluserGroup(group.getGroupId(), username, "HI!!!");
         java.util.Date time = new java.util.Date();
-        usergroup.setDateTime(time);
+        TbluserGroup usergroup = new TbluserGroup(group.getGroupId(), username,time, "HI!!!");
         em.getTransaction().begin();
         em.persist(usergroup);
         em.getTransaction().commit();

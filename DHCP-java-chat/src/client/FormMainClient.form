@@ -95,7 +95,7 @@
                   <Component id="lblAvatar" min="-2" pref="104" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTextField1" max="32767" attributes="0"/>
+                      <Component id="txtSlogan" max="32767" attributes="0"/>
                       <Component id="lblUser" alignment="1" max="32767" attributes="0"/>
                       <Component id="lblUser1" alignment="1" max="32767" attributes="0"/>
                       <Component id="txtFullname" alignment="0" max="32767" attributes="0"/>
@@ -114,7 +114,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="lblUser1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextField1" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="txtSlogan" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
                       <Component id="lblAvatar" min="-2" pref="104" max="-2" attributes="0"/>
                   </Group>
@@ -162,12 +162,13 @@
             <Property name="text" type="java.lang.String" value="H&#xf4;m nay b&#x1ea1;n th&#x1ebf; n&#xe0;o ?"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField1">
+        <Component class="javax.swing.JTextField" name="txtSlogan">
           <Properties>
             <Property name="text" type="java.lang.String" value="Tr&#xe2;tss"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSloganActionPerformed"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSloganKeyPressed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtFullname">

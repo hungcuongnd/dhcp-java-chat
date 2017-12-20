@@ -98,10 +98,12 @@ public class PanelEntity extends JPanel {
 
         lblTop.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblTop.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTop.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         lblTop.setText(txtTop);
 
         lblBottom.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblBottom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblBottom.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblBottom.setText(txtBottom);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(this);

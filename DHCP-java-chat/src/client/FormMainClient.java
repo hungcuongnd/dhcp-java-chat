@@ -13,13 +13,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -53,6 +49,7 @@ public class FormMainClient extends javax.swing.JFrame {
     private Gson gson = new Gson();
     private JList listFriend;
     DefaultListModel<String> listModel = new DefaultListModel<>();
+    List<UserSimple> listusersimple = null;
 
     FormLogin formlogin;
 
@@ -72,7 +69,7 @@ public class FormMainClient extends javax.swing.JFrame {
         this.formlogin.setVisible(true);
         txtFullname.setBorder(null);
         // end create login form
-        
+
         backgroundThread();
     }
 
@@ -92,7 +89,7 @@ public class FormMainClient extends javax.swing.JFrame {
         lblAvatar = new javax.swing.JLabel();
         lblUser = new javax.swing.JLabel();
         lblUser1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSlogan = new javax.swing.JTextField();
         txtFullname = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         txtAddFriend = new javax.swing.JTextField();
@@ -138,10 +135,15 @@ public class FormMainClient extends javax.swing.JFrame {
         lblUser1.setFont(new java.awt.Font("Dialog", 2, 13)); // NOI18N
         lblUser1.setText("Hôm nay bạn thế nào ?");
 
-        jTextField1.setText("Trâtss");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtSlogan.setText("Trâtss");
+        txtSlogan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtSloganActionPerformed(evt);
+            }
+        });
+        txtSlogan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSloganKeyPressed(evt);
             }
         });
 
@@ -169,7 +171,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1)
+                    .addComponent(txtSlogan)
                     .addComponent(lblUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtFullname)))
@@ -185,7 +187,7 @@ public class FormMainClient extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblUser1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtSlogan, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 2, Short.MAX_VALUE))
         );
@@ -322,6 +324,11 @@ public class FormMainClient extends javax.swing.JFrame {
                                     txtFullname.setText(fullname);
                                 }
 
+                                String Slogan = rq.getSlogan();
+                                if (Slogan != null && !Slogan.isEmpty()) {
+                                    txtSlogan.setText(Slogan);
+                                }
+
                                 // Đặt avatar có ảnh thì lấy ko thì lấy ảnh mặc định
                                 if (rq.getAvatar() != null && !rq.getAvatar().isEmpty()) {
                                     ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
@@ -332,7 +339,8 @@ public class FormMainClient extends javax.swing.JFrame {
                                 }
 
                                 // Vẽ list bạn
-                                for (UserSimple user : rq.getListFriend()) {
+                                listusersimple = rq.getListFriend();
+                                for (UserSimple user : listusersimple) {
                                     // Khởi tạo panelEntity (tự động add vào panelWrapper)
                                     new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0);
                                 }
@@ -365,6 +373,18 @@ public class FormMainClient extends javax.swing.JFrame {
                             continue;
                         }
 
+                        //Nếu là kiểu xóa bạn
+                        if (rq.getType() == RequestType.DELETE_FRIEND) {
+                            if (rq.isIsDeletedFriend()) {
+                                if (listusersimple != null) {
+                                    String delfriend = rq.getToUser();
+                                    panelWrapper.remove(panelFriendMap.get(delfriend));
+                                    panelWrapper.revalidate();
+                                    panelWrapper.repaint();
+                                    continue;
+                                }
+                            }
+                        }
                         // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
                         if (rq.getType() == RequestType.GET_FRIEND_INFO) {
                             ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
@@ -407,16 +427,12 @@ public class FormMainClient extends javax.swing.JFrame {
 //                                lblAvatar.setIcon(avatar);
 //                            }
                             String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
-                                    + "\n Ảnh sẽ tự động lưu tại ổ đĩa D";
+                                    + "\n Ảnh sẽ tự động lưu tại D:\\";
                             int dialogButton = JOptionPane.YES_NO_OPTION;
                             int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
                             if (dialogResult == 0) {
                                 System.out.println("Yes option");
-                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                                byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
-                                String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
-                                Path path = Paths.get("D:\\" + fileName);
-                                Files.write(path, decode);
+//                                String file = FileConverter(Frq.getAvatar());
                             } else {
                                 System.out.println("No Option");
 
@@ -427,6 +443,13 @@ public class FormMainClient extends javax.swing.JFrame {
                             txtFullname.setText(rq.getFullName());
                             continue;
                         }
+
+                        //Nếu trả về slogan
+                        if (rq.getType() == RequestType.CHANGE_SLOGAN) {
+                            txtSlogan.setText(rq.getSlogan());
+                            continue;
+                        }
+
                         // Nếu là kiểu lay lich su chat
                         if (rq.getType() == RequestType.HISTORY) {
 
@@ -468,18 +491,18 @@ public class FormMainClient extends javax.swing.JFrame {
                     System.out.println("Connection Closed");
                 }
             }
-        }).start();
+        }
+        ).start();
     }
-
     // end thread in background
-//    private void askFriend() {
-//        String newFriend = this.txtAddFriend.getText();
-//        Request rqAskFriend = new Request(this.user, newFriend, null, RequestType.ASKFRIEND, null);
-//        String jsonAskFriend = gson.toJson(rqAskFriend);
-//        os.println(jsonAskFriend);
-//        os.flush();
-//        this.listModel.addElement(newFriend);
-//    }    
+    //    private void askFriend() {
+    //        String newFriend = this.txtAddFriend.getText();
+    //        Request rqAskFriend = new Request(this.user, newFriend, null, RequestType.ASKFRIEND, null);
+    //        String jsonAskFriend = gson.toJson(rqAskFriend);
+    //        os.println(jsonAskFriend);
+    //        os.flush();
+    //        this.listModel.addElement(newFriend);
+    //    }    
 
     private void txtAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddFriendActionPerformed
 //        this.askFriend();
@@ -489,9 +512,9 @@ public class FormMainClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnAddFriendActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtSloganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSloganActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtSloganActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 //        int confirmed = JOptionPane.showConfirmDialog(null,
@@ -569,6 +592,12 @@ public class FormMainClient extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtFullnameKeyPressed
 
+    private void txtSloganKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSloganKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown()) {
+            changeSlogan(txtSlogan.getText());
+        }
+    }//GEN-LAST:event_txtSloganKeyPressed
+
     public void exit() {
         System.exit(0);
     }
@@ -589,12 +618,12 @@ public class FormMainClient extends javax.swing.JFrame {
         int formHeight = this.getHeight();
 
         setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
-        
+
         // test search friend
-        SearchFrame sf = new SearchFrame();
-        
-        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
-        sf.setVisible(true);
+//        SearchFrame sf = new SearchFrame();
+//
+//        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
+//        sf.setVisible(true);
         // end test search friend
     }
 
@@ -603,6 +632,14 @@ public class FormMainClient extends javax.swing.JFrame {
         rq.setFullName(fullname);
         String json = gson.toJson(rq);
         //System.out.println(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
+
+    public void changeSlogan(String slogan) {
+        Request rq = new Request(RequestType.CHANGE_SLOGAN, this.user, null);
+        rq.setSlogan(slogan);
+        String json = gson.toJson(rq);
         this.os.println(json);
         this.os.flush();
     }
@@ -691,13 +728,13 @@ public class FormMainClient extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblAvatar;
     private javax.swing.JLabel lblUser;
     private javax.swing.JLabel lblUser1;
     private javax.swing.JPanel panelWrapper;
     private javax.swing.JTextField txtAddFriend;
     private javax.swing.JTextField txtFullname;
+    private javax.swing.JTextField txtSlogan;
     // End of variables declaration//GEN-END:variables
 
     public JPanel getPanelWrapper() {
