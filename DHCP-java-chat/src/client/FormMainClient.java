@@ -378,16 +378,9 @@ public class FormMainClient extends javax.swing.JFrame {
                             if (rq.isIsDeletedFriend()) {
                                 if (listusersimple != null) {
                                     String delfriend = rq.getToUser();
-                                    UserSimple deluser = null;
-                                    for (UserSimple userSimple : listusersimple) {
-                                        if (userSimple.getUser().equals(delfriend)) {
-                                            deluser = userSimple;
-                                        }
-                                    }
-                                    listusersimple.remove(deluser);
-                                    for (UserSimple user : listusersimple) {
-                                        new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0);
-                                    }
+                                    panelWrapper.remove(panelFriendMap.get(delfriend));
+                                    panelWrapper.revalidate();
+                                    panelWrapper.repaint();
                                     continue;
                                 }
                             }
