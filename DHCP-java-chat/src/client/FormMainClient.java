@@ -627,10 +627,10 @@ public class FormMainClient extends javax.swing.JFrame {
         setLocation(screenWidth - formWidth - 50, (screenHeight - formHeight) / 3);
 
         // test search friend
-        SearchFrame sf = new SearchFrame();
-
-        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
-        sf.setVisible(true);
+//        SearchFrame sf = new SearchFrame();
+//
+//        sf.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
+//        sf.setVisible(true);
         // end test search friend
     }
 

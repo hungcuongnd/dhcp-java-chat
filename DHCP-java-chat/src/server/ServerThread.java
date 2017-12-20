@@ -1,3 +1,4 @@
+
 package server;
 
 import com.google.gson.Gson;
@@ -270,13 +271,13 @@ public class ServerThread extends Thread {
 
                 //Nếu là xóa friend thì xóa.
                 if(rq.getType() == RequestType.DELETE_FRIEND){
-                    //if(tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser())){
+                    if(tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser())){
                         rq.setIsDeletedFriend(true);
                         String jsonResponse = gson.toJson(rq);
                         this.os.println(jsonResponse);
                         this.os.flush();
                         continue;
-                    //}
+                    }
                 }
                 
                 //Nếu là đổi Fullname thì.
