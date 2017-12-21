@@ -274,6 +274,9 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTptxtInputKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTptxtInputKeyReleased(evt);
+            }
         });
         jScrollPane2.setViewportView(jTptxtInput);
 
@@ -507,6 +510,19 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnFreeHandActionPerformed
+
+    private void jTptxtInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTptxtInputKeyReleased
+        // TODO add your handling code here:
+        try{
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown()) {
+                jTptxtInput.setText("");
+                jTptxtInput.setCaretPosition(jTptxtInput.getText().length());
+            }
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jTptxtInputKeyReleased
 
     public void send(String newChat) {
         // Lấy text từ ô input
