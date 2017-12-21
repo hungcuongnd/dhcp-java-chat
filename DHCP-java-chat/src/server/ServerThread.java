@@ -208,6 +208,24 @@ public class ServerThread extends Thread {
                     }
                     continue;
                 }
+                if (rq.getType() == RequestType.REGISTER) {
+                    tblUserDAO userDAO = new tblUserDAO();                    
+                    Tbluser userGet = new Tbluser();
+                    userGet.setUserName(rq.getFromUser());
+                    userGet.setFullName(rq.getFullName());
+                    userGet.setPassWord(rq.getPassword());
+                    userGet.setAvartar("");
+                    userGet.setSlogan("");
+                    this.registerStatus = userDAO.createUser(userGet);   
+                    Request rqResponse = new Request();
+                    rqResponse.setType(RequestType.REGISTER);
+                    rqResponse.setIsRegisterSuccess(this.registerStatus);
+                    String json = gson.toJson(rqResponse);
+                    this.os.println(json);
+                    this.os.flush();
+                    // cần một thông báo ở đây để trả lại client biết đăng kí ok hay không
+                    continue;
+                }
                 // Gửi file
                 if (rq.getType() == RequestType.SEND_FILE) {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
