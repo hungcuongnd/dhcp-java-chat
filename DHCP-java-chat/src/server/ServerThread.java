@@ -141,10 +141,10 @@ public class ServerThread extends Thread {
                         for (Tbluser tbluser : listTblUser) {
                             if (hashMap.get(tbluser.getUserName()) != null) {
                                 // Nếu online
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true));                                                                
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true,true));                                                                
                             } else {
                                 // Nếu offline
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false));
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false,true));
                             }
                         }
                         rqResponse.setListFriend(listUserSimple);
