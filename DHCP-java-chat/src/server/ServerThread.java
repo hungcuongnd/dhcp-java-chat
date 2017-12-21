@@ -211,6 +211,7 @@ public class ServerThread extends Thread {
                 // Gửi file
                 if (rq.getType() == RequestType.SEND_FILE) {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    String friend = rq.getToUser();
                     // 1. Lưu ảnh và folde images
                     // Lấy file ảnh
                     byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
@@ -220,12 +221,14 @@ public class ServerThread extends Thread {
                     Files.write(path, decode);
                     System.err.println("Đã nhận file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
                     // 3. Truyền lại avatar mới
-                    // Xài lại cái request vừa nhận                    
+                    // Xài lại cái request vừa nhận   
                     rq.setStringOfFile(FileConverter.fileToString("images/" + fileName));
-                    System.err.println("Đang gửi file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
-                    String jsonResponse = gson.toJson(rq);
-                    this.os.println(jsonResponse);
-                    this.os.flush();
+                    if (this.hashMap.get(friend) != null) {
+                        String jsonResponse = gson.toJson(rq);
+                        this.hashMap.get(friend).getOs().println(jsonResponse);
+                        this.hashMap.get(friend).getOs().flush();
+                        System.err.println("Đang gửi file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
+                    }
                     continue;
                 }
                 // Nếu là kiểu lấy thông tin bạn
