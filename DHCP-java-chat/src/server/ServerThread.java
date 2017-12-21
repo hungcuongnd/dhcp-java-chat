@@ -177,25 +177,75 @@ public class ServerThread extends Thread {
                     }
                     continue;
                 }
+                if (rq.getType() == RequestType.MESSAGE) {
+                    String friend = rq.getToUser();
 
+                    System.out.println("server da nhan tn");
+
+                    if (this.hashMap.get(friend) != null) {
+                        this.hashMap.get(friend).getOs().println(json);
+                        this.hashMap.get(friend).getOs().flush();
+                        System.out.println("server gui tn");
+
+                        // Lưu vào db
+                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 0, rq.getContent().getSas().toString());
+                    }
+                    continue;
+                }
+                if (rq.getType() == RequestType.MESSAGE) {
+                    String friend = rq.getToUser();
+
+                    System.out.println("server da nhan tn");
+
+                    if (this.hashMap.get(friend) != null) {
+                        this.hashMap.get(friend).getOs().println(json);
+                        this.hashMap.get(friend).getOs().flush();
+                        System.out.println("server gui tn");
+
+                        // Lưu vào db
+                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 0, rq.getContent().getSas().toString());
+                    }
+                    continue;
+                }
+                if (rq.getType() == RequestType.REGISTER) {
+                    tblUserDAO userDAO = new tblUserDAO();                    
+                    Tbluser userGet = new Tbluser();
+                    userGet.setUserName(rq.getFromUser());
+                    userGet.setFullName(rq.getFullName());
+                    userGet.setPassWord(rq.getPassword());
+                    userGet.setAvartar("");
+                    userGet.setSlogan("");
+                    this.registerStatus = userDAO.createUser(userGet);   
+                    Request rqResponse = new Request();
+                    rqResponse.setType(RequestType.REGISTER);
+                    rqResponse.setIsRegisterSuccess(this.registerStatus);
+                    String json = gson.toJson(rqResponse);
+                    this.os.println(json);
+                    this.os.flush();
+                    // cần một thông báo ở đây để trả lại client biết đăng kí ok hay không
+                    continue;
+                }
                 // Gửi file
                 if (rq.getType() == RequestType.SEND_FILE) {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    String friend = rq.getToUser();
                     // 1. Lưu ảnh và folde images
                     // Lấy file ảnh
                     byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
                     // Tạo tên file ảnh: user + extension
-                    String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
+                    String fileName = rq.getFromUser() +"-"+ rq.getToUser()+ "-" + timestamp.getTime() + "." + rq.getExtension()+"";
                     Path path = Paths.get("images/" + fileName);
                     Files.write(path, decode);
-                    System.err.println("Đã nhận file từ " + rq.getFromUser() + " gửi tới " + rq.getToUser());
+                    System.err.println("Đã nhận file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
                     // 3. Truyền lại avatar mới
-                    // Xài lại cái request vừa nhận                    
+                    // Xài lại cái request vừa nhận   
                     rq.setStringOfFile(FileConverter.fileToString("images/" + fileName));
-                    System.err.println("Đang gửi file từ " + rq.getFromUser() + " gửi tới " + rq.getToUser());
-                    String jsonResponse = gson.toJson(rq);
-                    this.os.println(jsonResponse);
-                    this.os.flush();
+                    if (this.hashMap.get(friend) != null) {
+                        String jsonResponse = gson.toJson(rq);
+                        this.hashMap.get(friend).getOs().println(jsonResponse);
+                        this.hashMap.get(friend).getOs().flush();
+                        System.err.println("Đang gửi file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
+                    }
                     continue;
                 }
                 // Nếu là kiểu lấy thông tin bạn
@@ -251,7 +301,7 @@ public class ServerThread extends Thread {
                 }
 
                 //Nếu là đổi Fullname thì.
-                if (rq.getType() == RequestType.CHANGE_FULLNAME) {
+                if(rq.getType() == RequestType.CHANGE_FULLNAME){
                     tblUserDAO DAOuser = new tblUserDAO();
                     Tbluser newuser = DAOuser.findByName(rq.getFromUser());
                     newuser.setFullName(rq.getFullName());
@@ -288,10 +338,10 @@ public class ServerThread extends Thread {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistory) {
                             historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName() //, tbluserUser.getTbluser1().getUserName()
-                                    ,
-                                     tbluserUser.getContent(),
-                                    tbluserUser.getStatus(),
-                                    tbluserUser.getSas()));
+                                //, tbluserUser.getTbluser1().getUserName()
+                                , tbluserUser.getContent()
+                                , tbluserUser.getStatus()
+                                , tbluserUser.getSas()));
                         }
                         rq.setChatHistory(historyChatList);
                     }
@@ -305,11 +355,11 @@ public class ServerThread extends Thread {
                     if (listChatHistoryUnRead != null) {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistoryUnRead) {
-                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName() //, tbluserUser.getTbluser1().getUserName()
-                                    ,
-                                     tbluserUser.getContent(),
-                                    tbluserUser.getStatus(),
-                                    tbluserUser.getSas()));
+                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
+                                //, tbluserUser.getTbluser1().getUserName()
+                                , tbluserUser.getContent()
+                                , tbluserUser.getStatus()
+                                , tbluserUser.getSas()));
                         }
                         rq.setChatHistory(historyChatList);
                     }
