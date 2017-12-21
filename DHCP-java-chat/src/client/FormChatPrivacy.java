@@ -6,11 +6,14 @@
 package client;
 
 import com.google.gson.Gson;
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;
 import database.DAO.tblUserUserDAO;
 import database.Entities.TbluserUser;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
@@ -60,6 +64,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     private String history = "";
     private PrintWriter printWriter = null;
     public String rootMsg = "";
+    private boolean soundActive = false;
     private boolean firstString = true;
     private int pos = 0;
     private Gson gson = new Gson();
@@ -68,7 +73,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     String tmp1 = "";
     int first = 0;
     private int loadNumber = 0;
-
+    private static final String VOICENAME_KENVIN = "kevin16";
+    
     public FormChatPrivacy(String user, String friendUser, String friendName, PrintWriter printWriter) {
         this.user = user;
         this.friendUser = friendUser;
@@ -157,6 +163,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTptxtInput = new javax.swing.JTextPane();
         btnSendFile = new javax.swing.JButton();
+        btnFreeHand = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         btnSend = new javax.swing.JButton();
 
@@ -177,7 +184,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 672, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -277,15 +284,22 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             }
         });
 
+        btnFreeHand.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/mute.png"))); // NOI18N
+        btnFreeHand.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFreeHandActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(cboFont, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cboSize, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,20 +314,25 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEmotion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSendFile, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 62, Short.MAX_VALUE))
+                        .addComponent(btnSendFile, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnFreeHand, javax.swing.GroupLayout.PREFERRED_SIZE, 42, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jtbtnBold, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEmotion, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(btnEmotion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnFontColor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jtbtnUnderline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jtbtnItalic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cboSize)
                     .addComponent(cboFont)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnFreeHand, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnSendFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -353,8 +372,8 @@ public class FormChatPrivacy extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(30, 30, 30)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 71, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -469,6 +488,26 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSendFileActionPerformed
 
+    private void btnFreeHandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFreeHandActionPerformed
+        if (soundActive == false) {
+            soundActive = true;
+            try {
+                Image img = ImageIO.read(getClass().getResource("/image/un-mute.png"));
+                btnFreeHand.setIcon(new ImageIcon(img));
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+        } else {
+            soundActive = false;
+            try {
+                Image img = ImageIO.read(getClass().getResource("/image/mute.png"));
+                btnFreeHand.setIcon(new ImageIcon(img));
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+        }
+    }//GEN-LAST:event_btnFreeHandActionPerformed
+
     public void send(String newChat) {
         // Lấy text từ ô input
         //String newChat = this.jTptxtInput.getText();
@@ -496,6 +535,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEmotion;
     private javax.swing.JButton btnFontColor;
+    private javax.swing.JButton btnFreeHand;
     private javax.swing.JButton btnSend;
     private javax.swing.JButton btnSendFile;
     private javax.swing.JComboBox<String> cboFont;
@@ -602,6 +642,7 @@ public class FormChatPrivacy extends javax.swing.JFrame {
     }
 
     private void displayTextReceive(String user, SimpleAttributeSet sas, String tmp) {
+        String rawMessage = tmp;
         StyledDocument doc = jTextPaneContent.getStyledDocument();
         SimpleAttributeSet buffer = new SimpleAttributeSet();
         StyleConstants.setBold(buffer, true);
@@ -633,11 +674,24 @@ public class FormChatPrivacy extends javax.swing.JFrame {
             jTextPaneContent.setCharacterAttributes(sas, false);
             jTextPaneContent.setParagraphAttributes(sas, true);
             jTextPaneContent.replaceSelection(tmp);
-
+            if (soundActive) {
+               speaker(rawMessage); 
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
+    }
+
+    public void speaker(String s) {
+        Voice voice;
+        VoiceManager vm = VoiceManager.getInstance();
+        voice = vm.getVoice(VOICENAME_KENVIN);
+        voice.allocate();
+        try {
+            voice.speak(s);
+        } catch (Exception ex) {
+        }
     }
 
     public void updateTxtContentReceive(Request rq) {
