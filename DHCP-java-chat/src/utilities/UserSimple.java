@@ -14,14 +14,16 @@ public class UserSimple {
     private String user;
     private String fullName;
     private boolean online;
+    private boolean isSendRequest;
 
     public UserSimple() {
     }
 
-    public UserSimple(String user, String fullName, boolean online) {
+    public UserSimple(String user, String fullName, boolean online, boolean isSendRequest) {
         this.user = user;
         this.fullName = fullName;
         this.online = online;
+        this.isSendRequest = isSendRequest;
     }
 
     public String getUser() {
@@ -46,6 +48,14 @@ public class UserSimple {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public boolean isIsSendRequest() {
+        return isSendRequest;
+    }
+
+    public void setIsSendRequest(boolean isSendRequest) {
+        this.isSendRequest = isSendRequest;
     }
 
     @Override

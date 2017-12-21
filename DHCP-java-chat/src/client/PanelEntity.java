@@ -24,6 +24,7 @@ public class PanelEntity extends JPanel {
     private String txtBottom;
     private boolean isOnline;
     private int groupId;
+    private boolean isFriend;
 
     private JLabel lblIcon = new JLabel();
     private JLabel lblTop = new JLabel();
@@ -33,13 +34,14 @@ public class PanelEntity extends JPanel {
     private final ImageIcon offlineIcon = new ImageIcon("src/image/offline-icon.png");
     private final ImageIcon groupIcon = new ImageIcon("src/image/group-icon.png");
 
-    public PanelEntity(FormMainClient formParent, int panelType, String txtTop, String txtBottom, boolean isOnline, int groupId) {
+    public PanelEntity(FormMainClient formParent, int panelType, String txtTop, String txtBottom, boolean isOnline, int groupId, boolean isFriend) {
 
         this.panelType = panelType;
         this.txtTop = txtTop;
         this.txtBottom = txtBottom;
         this.isOnline = isOnline;
         this.groupId = groupId;
+        this.isFriend = isFriend;
 
         if (panelType == PanelType.PANEL_FRIEND) {
             lblIcon.setIcon((isOnline) ? onlineIcon : offlineIcon);
@@ -96,12 +98,20 @@ public class PanelEntity extends JPanel {
         lblIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblIcon.setText("");
 
-        lblTop.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        if (isFriend) {
+            lblTop.setFont(new java.awt.Font("Dialog", 1, 14));
+        } else {
+            lblTop.setFont(new java.awt.Font("Dialog", 2, 14));
+        }
         lblTop.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTop.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         lblTop.setText(txtTop);
 
-        lblBottom.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        if (isFriend) {
+            lblBottom.setFont(new java.awt.Font("Dialog", 1, 14));
+        } else {
+            lblBottom.setFont(new java.awt.Font("Dialog", 2, 14));
+        }        
         lblBottom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblBottom.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblBottom.setText(txtBottom);
@@ -175,6 +185,14 @@ public class PanelEntity extends JPanel {
 
     public int getGroupId() {
         return groupId;
+    }
+
+    public boolean isIsFriend() {
+        return isFriend;
+    }
+
+    public void setIsFriend(boolean isFriend) {
+        this.isFriend = isFriend;
     }
 
     public void setGroupId(int groupId) {

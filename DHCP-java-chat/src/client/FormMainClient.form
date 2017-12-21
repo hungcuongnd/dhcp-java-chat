@@ -97,7 +97,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="txtSlogan" max="32767" attributes="0"/>
                       <Component id="lblUser" alignment="1" max="32767" attributes="0"/>
-                      <Component id="lblUser1" alignment="1" max="32767" attributes="0"/>
+                      <Component id="lblUser1" alignment="1" pref="200" max="32767" attributes="0"/>
                       <Component id="txtFullname" alignment="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -199,10 +199,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="txtAddFriend" min="-2" pref="229" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnAddFriend" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="txtAddFriend" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAddFriend" min="-2" pref="69" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -210,10 +209,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txtAddFriend" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="btnAddFriend" alignment="3" max="32767" attributes="0"/>
+                      <Component id="txtAddFriend" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Component id="btnAddFriend" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -227,6 +226,7 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtAddFriendActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtAddFriendKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAddFriend">
@@ -234,7 +234,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Dialog" size="14" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Add"/>
+            <Property name="text" type="java.lang.String" value="Th&#xea;m"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddFriendActionPerformed"/>
