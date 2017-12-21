@@ -13,7 +13,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -265,6 +270,7 @@ public class FormMainClient extends javax.swing.JFrame {
 
                 try {
                     address = InetAddress.getLocalHost();
+//                    sk = new Socket("192.168.1.105", 6969);
                     sk = new Socket(address, 6969);
                     is = new BufferedReader(new InputStreamReader(sk.getInputStream()));
                     os = new PrintWriter(sk.getOutputStream());
@@ -433,6 +439,11 @@ public class FormMainClient extends javax.swing.JFrame {
                             if (dialogResult == 0) {
                                 System.out.println("Yes option");
 //                                String file = FileConverter(Frq.getAvatar());
+                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
+                                String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
+                                Path path = Paths.get("D:\\" + fileName);
+                                Files.write(path, decode);
                             } else {
                                 System.out.println("No Option");
 
