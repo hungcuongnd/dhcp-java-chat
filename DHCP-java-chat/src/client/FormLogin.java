@@ -22,10 +22,11 @@ public class FormLogin extends javax.swing.JFrame {
 //    FormRegister formRegister;
     private Gson gson = new Gson();
 
-    public FormLogin(FormMainClient formMainClient) {
+    public FormLogin(FormMainClient formMainClient, boolean hasAdress) {
         initComponents();
         this.formMainClient = formMainClient;
         this.formMainClient.setVisible(false);
+        
     }
 
     /**

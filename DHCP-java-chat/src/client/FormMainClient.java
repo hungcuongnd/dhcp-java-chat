@@ -55,9 +55,11 @@ public class FormMainClient extends javax.swing.JFrame {
     private JList listFriend;
     DefaultListModel<String> listModel = new DefaultListModel<>();
     List<UserSimple> listusersimple = null;
-
+    String address;
+    
     FormLogin formlogin;
-
+    FormAddress formaddress;
+    
     String friendToDel = null;
 
     // var for list friend
@@ -66,12 +68,22 @@ public class FormMainClient extends javax.swing.JFrame {
 
     FormRegister formRegister;
 
-    public FormMainClient() {
+    
+    public FormMainClient(FormAddress add, String Address) {
         initComponents();
+        if(add != null){
+            this.formaddress = add;
+            this.formaddress.setVisible(false);
+            this.formlogin = new FormLogin(this,true);
+            this.formlogin.setLocationRelativeTo(null);
+            this.formlogin.setVisible(true);
+        }else{
+            this.formaddress = new FormAddress(this);
+            this.formaddress.setLocationRelativeTo(null);
+            this.formaddress.setVisible(true);
+        }
         // create login form
-        this.formlogin = new FormLogin(this);
-        this.formlogin.setLocationRelativeTo(null);
-        this.formlogin.setVisible(true);
+        
         txtFullname.setBorder(null);
         // end create login form
 
@@ -264,13 +276,10 @@ public class FormMainClient extends javax.swing.JFrame {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                InetAddress address = null;
                 Socket sk = null;
                 BufferedReader is = null;
 
                 try {
-                    address = InetAddress.getLocalHost();
-//                    sk = new Socket("192.168.1.105", 6969);
                     sk = new Socket(address, 6969);
                     is = new BufferedReader(new InputStreamReader(sk.getInputStream()));
                     os = new PrintWriter(sk.getOutputStream());
@@ -452,12 +461,14 @@ public class FormMainClient extends javax.swing.JFrame {
                         //Nếu trả về fullname
                         if (rq.getType() == RequestType.CHANGE_FULLNAME) {
                             txtFullname.setText(rq.getFullName());
+                            new QuickPopup("Cập nhật tên thành công thành công");
                             continue;
                         }
 
                         //Nếu trả về slogan
                         if (rq.getType() == RequestType.CHANGE_SLOGAN) {
                             txtSlogan.setText(rq.getSlogan());
+                            new QuickPopup("Cập nhật trạng thái thành công");
                             continue;
                         }
 
@@ -727,7 +738,7 @@ public class FormMainClient extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormMainClient();
+                new FormMainClient(null,null);
 
             }
         });
