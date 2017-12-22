@@ -55,6 +55,7 @@ public class FormMainClient extends javax.swing.JFrame {
     private PrintWriter os = null;
     private Gson gson = new Gson();
     List<UserSimple> listusersimple = null;
+    List<UserSimple> listusersimplenonex = null;
     String address;
 
     FormLogin formlogin;
@@ -376,11 +377,19 @@ public class FormMainClient extends javax.swing.JFrame {
                                         lblAvatar.setIcon(new ImageIcon("images/avatar-100.jpg"));
                                     }
 
-                                    // Vẽ list bạn
+                                    // Vẽ list bạn đã except
                                     listusersimple = rq.getListFriend();
                                     for (UserSimple user : listusersimple) {
                                         // Khởi tạo panelEntity (tự động add vào panelWrapper)
                                         new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0, true);
+                                    }
+                                    
+                                    //Vẽ list ban chua except
+                                    listusersimplenonex = rq.getListFriendNonExcepted();
+                                    for (UserSimple user : listusersimplenonex) {
+                                        // Khởi tạo panelEntity (tự động add vào panelWrapper)
+                                        System.out.println(user.getFullName()+user.isIsSendRequest());
+                                        new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName() + "(waiting)", user.getUser(), user.isOnline(), 0, true);
                                     }
 
                                     // Hiện FormMainClient, ẩn FormLogin

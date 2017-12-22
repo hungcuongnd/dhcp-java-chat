@@ -38,7 +38,8 @@ public class ServerThread extends Thread {
     private ListfriendDAO listFriendDAO = new ListfriendDAO();
     private List<Tbluser> listTblUser = null;
     private tblFriendDAO tblfriend = new tblFriendDAO();
-
+    private List<UserSimple> listUserExcepted = null;
+    private List<UserSimple> listUserNonExcepted = null;
     // thành phần chính
     Socket s = null;
     FormMainServer formMainServer = null;
@@ -131,22 +132,36 @@ public class ServerThread extends Thread {
                         rqResponse.setAvatar(FileConverter.fileToString("images/" + userInfo.getAvartar()));
 
                         // Lấy list bạn                        
-                        this.listTblUser = listFriendDAO.getListFriend(user);
-
+//                        this.listTblUser = listFriendDAO.getListFriend(user);
+                        listUserExcepted = listFriendDAO.getListFriendExcepted(user);
+                        listUserNonExcepted = listFriendDAO.getListFriendNotExcepted(user);
                         // tbluser ko thể convert sang json, phải dùng UserSimple thay thế
                         ArrayList<UserSimple> listUserSimple = new ArrayList<>();
+                        ArrayList<UserSimple> listUserSimpleNonExcepted = new ArrayList<>();
 
                         // Kiểm tra từng đứa bạn có online ko, rồi gửi cho client để vẽ list bạn
-                        for (Tbluser tbluser : listTblUser) {
-                            if (hashMap.get(tbluser.getUserName()) != null) {
+                        for (UserSimple usersimple : listUserExcepted) {
+                            if (hashMap.get(usersimple.getUser()) != null) {
                                 // Nếu online
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true, true));
+                                listUserSimple.add(new UserSimple(usersimple.getUser(), usersimple.getFullName(), true, true));
                             } else {
                                 // Nếu offline
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false, true));
+                                listUserSimple.add(new UserSimple(usersimple.getUser(), usersimple.getFullName(), false, true));
                             }
                         }
+
+                        for (UserSimple usersimple : listUserNonExcepted) {
+                            if (usersimple.isIsSendRequest()) {
+                                // Nếu online
+                                listUserSimpleNonExcepted.add(new UserSimple(usersimple.getUser(), usersimple.getFullName(), false, true));
+                            } else {
+                                // Nếu offline
+                                listUserSimpleNonExcepted.add(new UserSimple(usersimple.getUser(), usersimple.getFullName(), false, false));
+                            }
+                        }
+
                         rqResponse.setListFriend(listUserSimple);
+                        rqResponse.setListFriendNonExcepted(listUserSimpleNonExcepted);
 
                         // Báo cho tất cả bạn bè biết nó đang online
                         this.alertStatusToFriends(true);
@@ -178,14 +193,14 @@ public class ServerThread extends Thread {
                     continue;
                 }
                 if (rq.getType() == RequestType.REGISTER) {
-                    tblUserDAO userDAO = new tblUserDAO();                    
+                    tblUserDAO userDAO = new tblUserDAO();
                     Tbluser userGet = new Tbluser();
                     userGet.setUserName(rq.getFromUser());
                     userGet.setFullName(rq.getFullName());
                     userGet.setPassWord(rq.getPassword());
                     userGet.setAvartar("");
                     userGet.setSlogan("");
-                    this.registerStatus = userDAO.createUser(userGet);   
+                    this.registerStatus = userDAO.createUser(userGet);
                     Request rqResponse = new Request();
                     rqResponse.setType(RequestType.REGISTER);
                     rqResponse.setIsRegisterSuccess(this.registerStatus);
@@ -203,10 +218,10 @@ public class ServerThread extends Thread {
                     // Lấy file ảnh
                     byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
                     // Tạo tên file ảnh: user + extension
-                    String fileName = rq.getFromUser() +"-"+ rq.getToUser()+ "-" + timestamp.getTime() + "." + rq.getExtension()+"";
+                    String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
                     Path path = Paths.get("images/" + fileName);
                     Files.write(path, decode);
-                    System.err.println("Đã nhận file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
+                    System.err.println("Đã nhận file từ " + rq.getFromUser() + " gửi tới " + rq.getToUser());
                     // 3. Truyền lại avatar mới
                     // Xài lại cái request vừa nhận   
                     rq.setStringOfFile(FileConverter.fileToString("images/" + fileName));
@@ -214,7 +229,7 @@ public class ServerThread extends Thread {
                         String jsonResponse = gson.toJson(rq);
                         this.hashMap.get(friend).getOs().println(jsonResponse);
                         this.hashMap.get(friend).getOs().flush();
-                        System.err.println("Đang gửi file từ "+rq.getFromUser()+ " gửi tới "+rq.getToUser());
+                        System.err.println("Đang gửi file từ " + rq.getFromUser() + " gửi tới " + rq.getToUser());
                     }
                     continue;
                 }
@@ -271,7 +286,7 @@ public class ServerThread extends Thread {
                 }
 
                 //Nếu là đổi Fullname thì.
-                if(rq.getType() == RequestType.CHANGE_FULLNAME){
+                if (rq.getType() == RequestType.CHANGE_FULLNAME) {
                     tblUserDAO DAOuser = new tblUserDAO();
                     Tbluser newuser = DAOuser.findByName(rq.getFromUser());
                     newuser.setFullName(rq.getFullName());
@@ -308,19 +323,20 @@ public class ServerThread extends Thread {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistory) {
                             historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName() //, tbluserUser.getTbluser1().getUserName()
-                                //, tbluserUser.getTbluser1().getUserName()
-                                , tbluserUser.getContent()
-                                , tbluserUser.getStatus()
-                                , tbluserUser.getSas()));
+                                    //, tbluserUser.getTbluser1().getUserName()
+                                    ,
+                                     tbluserUser.getContent(),
+                                    tbluserUser.getStatus(),
+                                    tbluserUser.getSas()));
                         }
                         rq.setChatHistory(historyChatList);
                     }
-                    
+
                     String jsonResponse = gson.toJson(rq);
                     this.os.println(jsonResponse);
                     this.os.flush();
                     continue;
-                    
+
                 }
                 // Nếu là kiểu lấy lịch sử chat chua doc
                 if (rq.getType() == RequestType.UNREADMSG) {
@@ -331,11 +347,11 @@ public class ServerThread extends Thread {
                     if (listChatHistoryUnRead != null) {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistoryUnRead) {
-                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
-                                //, tbluserUser.getTbluser1().getUserName()
-                                , tbluserUser.getContent()
-                                , tbluserUser.getStatus()
-                                , tbluserUser.getSas()));
+                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName() //, tbluserUser.getTbluser1().getUserName()
+                                    ,
+                                     tbluserUser.getContent(),
+                                    tbluserUser.getStatus(),
+                                    tbluserUser.getSas()));
                         }
                         rq.setChatHistory(historyChatList);
                     }
@@ -436,25 +452,27 @@ public class ServerThread extends Thread {
                 System.out.println("Socket Close Error");
             }
         }//end finally
+
+
     }// end void run
 
     public void alertStatusToFriends(boolean status) {
         // Lấy lại list bạn (ko tận dụng lại được listTblUser trước đó vì có thể đã thay đổi)
-        this.listTblUser = this.listFriendDAO.getListFriend(this.user);
-
+        //        this.listTblUser = this.listFriendDAO.getListFriend(this.user);        
         // Tạo request, user nhận để trống, tí điền
         Request rq = new Request(RequestType.STATUS, this.user, null);
         rq.setLogin(status);
 
         // Gửi cho từng đứa
-        for (Tbluser tbluser : this.listTblUser) {
-            String userFriend = tbluser.getUserName();
+        for (UserSimple tbluser : this.listUserExcepted) {
+            String userFriend = tbluser.getUser();
             if (this.hashMap.get(userFriend) != null) {
                 rq.setToUser(userFriend);
                 String json = gson.toJson(rq);
                 this.hashMap.get(userFriend).getOs().println(json);
                 this.hashMap.get(userFriend).getOs().flush();
             }
+
         }
     }
 
