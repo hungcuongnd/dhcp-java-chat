@@ -28,13 +28,12 @@ public class TbluserUserPK implements Serializable {
     private String userName2;
     @Basic(optional = false)
     @Column(name = "date_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateTime;
+    private long dateTime;
 
     public TbluserUserPK() {
     }
 
-    public TbluserUserPK(String userName1, String userName2, Date dateTime) {
+    public TbluserUserPK(String userName1, String userName2, long dateTime) {
         this.userName1 = userName1;
         this.userName2 = userName2;
         this.dateTime = dateTime;
@@ -56,11 +55,11 @@ public class TbluserUserPK implements Serializable {
         this.userName2 = userName2;
     }
 
-    public Date getDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(long dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -69,7 +68,7 @@ public class TbluserUserPK implements Serializable {
         int hash = 0;
         hash += (userName1 != null ? userName1.hashCode() : 0);
         hash += (userName2 != null ? userName2.hashCode() : 0);
-        hash += (dateTime != null ? dateTime.hashCode() : 0);
+        //hash += (dateTime != null ? dateTime.hashCode() : 0);
         return hash;
     }
 
@@ -86,9 +85,9 @@ public class TbluserUserPK implements Serializable {
         if ((this.userName2 == null && other.userName2 != null) || (this.userName2 != null && !this.userName2.equals(other.userName2))) {
             return false;
         }
-        if ((this.dateTime == null && other.dateTime != null) || (this.dateTime != null && !this.dateTime.equals(other.dateTime))) {
-            return false;
-        }
+//        if ((this.dateTime == null && other.dateTime != null) || (this.dateTime != null && !this.dateTime.equals(other.dateTime))) {
+//            return false;
+//        }
         return true;
     }
 
