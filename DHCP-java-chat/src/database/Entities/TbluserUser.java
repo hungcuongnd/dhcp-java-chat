@@ -71,7 +71,7 @@ public class TbluserUser implements Serializable {
         this.tbluserUserPK = tbluserUserPK;
     }
 
-    public TbluserUser(String userName1, String userName2, Date dateTime, String content,Short status,String sas) {
+    public TbluserUser(String userName1, String userName2, long dateTime, String content,Short status,String sas) {
         this.tbluserUserPK = new TbluserUserPK(userName1, userName2, dateTime);
         this.content = content;
         this.status = status;

@@ -2,6 +2,7 @@ package server;
 
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -60,10 +61,12 @@ public class FormMainServer extends javax.swing.JFrame {
 
                 System.out.println("Server Listening......");
                 updateTextArea("Server started !");
-
+                String address = null;
                 try {
                     serverSk = new ServerSocket(6969);
-
+                    address = InetAddress.getLocalHost().getHostAddress();
+                    txtAddress.setText("Server Addess: "+address);
+                    System.out.println(address);
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.out.println("Server error");
@@ -113,6 +116,7 @@ public class FormMainServer extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         label = new javax.swing.JLabel();
         txtCount = new javax.swing.JTextField();
+        txtAddress = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Server");
@@ -151,13 +155,16 @@ public class FormMainServer extends javax.swing.JFrame {
                 .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtCount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62)
+                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtCount))
+                .addComponent(txtCount)
+                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -215,6 +222,7 @@ public class FormMainServer extends javax.swing.JFrame {
     private javax.swing.JLabel label;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextArea textArea;
+    private javax.swing.JLabel txtAddress;
     private javax.swing.JTextField txtCount;
     // End of variables declaration//GEN-END:variables
 }
