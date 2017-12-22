@@ -21,12 +21,16 @@ public class tblUserUserDAO {
 
     public void saveMassage1v1(String username1, String username2, String content, int status, String sas) {
         //lay thoi diem hien tai luu vao
-        long millisStart = Calendar.getInstance().getTimeInMillis();
-        TbluserUser message = new TbluserUser(username1, username2, millisStart, content, (short) status, sas);
+        try {
+            long millisStart = Calendar.getInstance().getTimeInMillis();
+            TbluserUser message = new TbluserUser(username1, username2, millisStart, content, (short) status, sas);
+            em.getTransaction().begin();
+            em.persist(message);
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-        em.getTransaction().begin();
-        em.persist(message);
-        em.getTransaction().commit();
     }
 
     public List<TbluserUser> checkUnreadMessage1v1(String username) {
@@ -47,6 +51,7 @@ public class tblUserUserDAO {
                     + username2 + "' AND t.user_name_2 = '" + username1 + "') ORDER BY t.date_time DESC LIMIT " + so + ",10", TbluserUser.class).getResultList();
             return list;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

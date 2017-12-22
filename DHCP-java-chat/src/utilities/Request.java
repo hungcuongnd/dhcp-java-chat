@@ -19,18 +19,12 @@ public class Request {
     private String stringOfFile;
     private String slogan;
 
-    public Tbluser getUser() {
-        return user;
-    }
-
-    public void setUser(Tbluser user) {
-        this.user = user;
-    }
     public String id;
 
     private boolean login = true;
     private String fullName;
     private ArrayList<UserSimple> listFriend;
+    private ArrayList<UserSimple> listFriendNonExcepted;
     private List<HistoryChat> chatHistory;
     private String avatar = "";
     private String extension = "";
@@ -40,6 +34,7 @@ public class Request {
     private String keyword;
     private boolean userExist;
     private boolean askFriend;
+    private boolean acceptFriend;
 
     public Request() {
 
@@ -66,6 +61,16 @@ public class Request {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public ArrayList<UserSimple> getListFriendNonExcepted() {
+        return listFriendNonExcepted;
+    }
+
+    public void setListFriendNonExcepted(ArrayList<UserSimple> listFriendNonExcepted) {
+        this.listFriendNonExcepted = listFriendNonExcepted;
+    }
+    
+    
 
     public String getToUser() {
         return toUser;
@@ -146,6 +151,14 @@ public class Request {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+    
+     public Tbluser getUser() {
+        return user;
+    }
+
+    public void setUser(Tbluser user) {
+        this.user = user;
+    }
 
     public String getExtension() {
         return extension;
@@ -217,6 +230,14 @@ public class Request {
 
     public void setAskFriend(boolean askFriend) {
         this.askFriend = askFriend;
+    }
+
+    public boolean isAcceptFriend() {
+        return acceptFriend;
+    }
+
+    public void setAcceptFriend(boolean acceptFriend) {
+        this.acceptFriend = acceptFriend;
     }
 
     @Override

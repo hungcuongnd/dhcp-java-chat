@@ -35,9 +35,7 @@ public class Tblfriend implements Serializable {
     @EmbeddedId
     protected TblfriendPK tblfriendPK;
     
-    @Lob
-    @Column(name = "status")
-    private Short status;
+    
     
     @JoinColumn(name = "user_name_2", referencedColumnName = "user_name", insertable = false, updatable = false)
     @ManyToOne(optional = false)
@@ -45,6 +43,10 @@ public class Tblfriend implements Serializable {
     @JoinColumn(name = "user_name_1", referencedColumnName = "user_name", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Tbluser tbluser1;
+    
+    
+    @Column(name = "status")
+    private Short status;
 
     public Tblfriend() {
     }
