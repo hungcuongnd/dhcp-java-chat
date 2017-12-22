@@ -389,23 +389,62 @@ public class ServerThread extends Thread {
                 }
 
                 // Nếu là kiểu ask friend
-                if (rq.getType() == RequestType.ASK_FRIEND) {
+                if (rq.getType() == RequestType.ASK_FRIEND_REQUEST) {
                     String friendUser = rq.getToUser();
                     // check xem có user đó trong db ko
+                    tblUserDAO userDAO = new tblUserDAO();
+                    Tbluser tblUser = userDAO.findByName(friendUser);
 
                     // Nếu ko có, báo về client
-                    if (!friendUser.equals("ly")) {
+                    if (tblUser == null) {
                         rq.setUserExist(false);
                     } else {
                         rq.setUserExist(true);
+
+                        // Lưu vào bảng friend
+//                        tblFriendDAO friendDAO = new tblFriendDAO();
+//                        friendDAO.saveFriend(this.user, friendUser);
+                        // Check thằng friend nếu online thì gửi yêu cầu ngay
+                        if (this.hashMap.get(friendUser) != null) {
+                            Request rqToFriend = new Request(RequestType.ASK_FRIEND_REQUEST, user, friendUser);
+                            rqToFriend.setFullName(rq.getFullName());
+                            String jsonToFriend = gson.toJson(rqToFriend);
+                            this.hashMap.get(friendUser).getOs().println(jsonToFriend);
+                            this.hashMap.get(friendUser).getOs().flush();
+                        }
+
                         // Nếu lưu thành công
                         rq.setAskFriend(true);
+                        rq.setToUser(tblUser.getUserName());
+                        rq.setFullName(tblUser.getFullName());
                     }
 
+                    // Đổi type thành response cho thằng gửi vẽ lại list
+                    rq.setType(RequestType.ASK_FRIEND_RESPONSE);
                     String json = gson.toJson(rq);
                     this.os.println(json);
                     this.os.flush();
                     continue;
+                }
+
+                // Nếu là kiểu ask friend
+                if (rq.getType() == RequestType.ASK_FRIEND_ACCEPT) {
+                    String user1 = rq.getToUser();
+                    String user2 = rq.getFromUser();
+                    // Lưu vào db
+                    tblFriendDAO friendDAO = new tblFriendDAO();
+                    if (rq.isAcceptFriend()) {
+                        friendDAO.updateFriend(user1, user2, 1);
+                    } else {
+                        friendDAO.deleteFriend(user1, user2);
+                    }
+
+                    // Nếu đang online thì báo nó 1 câu: nó chấp nhận m rồi đấy
+                    if (this.hashMap.get(user1) != null) {
+                        String json = gson.toJson(rq);
+                        this.hashMap.get(user1).getOs().println(json);
+                        this.hashMap.get(user1).getOs().flush();
+                    }
                 }
             }
 

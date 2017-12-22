@@ -25,6 +25,7 @@ public class PanelEntity extends JPanel {
     private boolean isOnline;
     private int groupId;
     private boolean isFriend;
+    private boolean isSendRequest;
 
     private JLabel lblIcon = new JLabel();
     private JLabel lblTop = new JLabel();
@@ -34,7 +35,7 @@ public class PanelEntity extends JPanel {
     private final ImageIcon offlineIcon = new ImageIcon("src/image/offline-icon.png");
     private final ImageIcon groupIcon = new ImageIcon("src/image/group-icon.png");
 
-    public PanelEntity(FormMainClient formParent, int panelType, String txtTop, String txtBottom, boolean isOnline, int groupId, boolean isFriend) {
+    public PanelEntity(FormMainClient formParent, int panelType, String txtTop, String txtBottom, boolean isOnline, int groupId, boolean isFriend, boolean isSendRequest) {
 
         this.panelType = panelType;
         this.txtTop = txtTop;
@@ -42,6 +43,7 @@ public class PanelEntity extends JPanel {
         this.isOnline = isOnline;
         this.groupId = groupId;
         this.isFriend = isFriend;
+        this.isSendRequest = isSendRequest;
 
         if (panelType == PanelType.PANEL_FRIEND) {
             lblIcon.setIcon((isOnline) ? onlineIcon : offlineIcon);
@@ -78,8 +80,17 @@ public class PanelEntity extends JPanel {
                 String friendUser = txtBottom;
                 String friendName = txtTop;
 
-                if (e.getClickCount() == 2) {
-                    formParent.showFormChat(friendUser, friendName);
+                if (e.getClickCount() == 2) {                    
+                    int type = 0;
+                    
+                    if (isFriend) {
+                        type = 0;
+                    } else if (isSendRequest) {
+                        type = -1;
+                    } else {
+                        type = 1;
+                    }
+                    formParent.clickPanelEntity(type, friendUser, friendName);
                 }
 
                 if (SwingUtilities.isRightMouseButton(e)) {
@@ -105,13 +116,20 @@ public class PanelEntity extends JPanel {
         }
         lblTop.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTop.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        lblTop.setText(txtTop);
+        if (isFriend) {
+            lblTop.setText(txtTop);
+        } else if (this.isSendRequest) {
+            lblTop.setText(txtTop + " - Đã gửi yêu cầu");
+        } else {
+            lblTop.setText(txtTop + " - Lời mời kết bạn");
+        }
+        
 
         if (isFriend) {
             lblBottom.setFont(new java.awt.Font("Dialog", 1, 14));
         } else {
             lblBottom.setFont(new java.awt.Font("Dialog", 2, 14));
-        }        
+        }
         lblBottom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblBottom.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblBottom.setText(txtBottom);
@@ -201,6 +219,14 @@ public class PanelEntity extends JPanel {
 
     public JLabel getLblIcon() {
         return lblIcon;
+    }
+
+    public boolean isIsSendRequest() {
+        return isSendRequest;
+    }
+
+    public void setIsSendRequest(boolean isSendRequest) {
+        this.isSendRequest = isSendRequest;
     }
 
     public void updateLblIcon(boolean isOnline) {

@@ -2,7 +2,6 @@ package client;
 
 import com.google.gson.Gson;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -39,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
+import utilities.FormChoose;
 import utilities.FormConfirm;
 import utilities.Request;
 import utilities.RequestType;
@@ -50,7 +50,8 @@ public class FormMainClient extends javax.swing.JFrame {
      * Creates new form Form_Main_Client
      */
     private String id;
-    public String user = null;
+    public String user = "";
+    private String fullName = "";
     private HashMap<String, FormChatPrivacy> friendHashMap = new HashMap<>();
     private PrintWriter os = null;
     private Gson gson = new Gson();
@@ -343,11 +344,19 @@ public class FormMainClient extends javax.swing.JFrame {
                             // Nếu là kiểu đăng nhập
                             if (rq.getType() == RequestType.LOGIN) {
 
+<<<<<<< HEAD
+                                // Lấy thông tin user
+                                if (rq.getFullName() != null && !rq.getFullName().isEmpty()) {
+                                    fullName = rq.getFullName();
+                                }
+                                txtFullname.setText(fullName);
+=======
                                 // server báo login thất bại
                                 if (!rq.isLogin()) {
                                     formlogin.throwMessage();
                                     System.out.println("login that bai");
                                 } else {
+>>>>>>> origin/master
 
                                     // server báo login thành công
                                     System.out.println("login thanh cong");
@@ -403,10 +412,18 @@ public class FormMainClient extends javax.swing.JFrame {
                             if (rq.getType() == RequestType.MESSAGE) {
                                 String userSend = rq.getFromUser();
 
+<<<<<<< HEAD
+                                // Vẽ list bạn
+                                listusersimple = rq.getListFriend();
+                                for (UserSimple user : listusersimple) {
+                                    // Khởi tạo panelEntity (tự động add vào panelWrapper)
+                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0, true, false);
+=======
                                 // Nếu FormChat chưa từng được bật thì bật lên
                                 if (friendHashMap.get(userSend) == null) {
                                     String friendName = panelFriendMap.get(userSend).getName();
                                     showFormChat(userSend, friendName);
+>>>>>>> origin/master
                                 }
 
                                 // update lịch sử tin nhắn
@@ -528,6 +545,35 @@ public class FormMainClient extends javax.swing.JFrame {
                                 // Reset list
                                 listModel.removeAllElements();
 
+<<<<<<< HEAD
+                        // Nếu là kiểu yêu cầu kết bạn
+                        if (rq.getType() == RequestType.ASK_FRIEND_RESPONSE) {
+                            if (!rq.isUserExist()) {
+                                System.out.println("user KO ton tai");
+                            } else {
+                                System.out.println("user ton tai");
+                                // Nếu yêu cầu kết bạn đã đc gửi
+                                if (rq.isAskFriend()) {
+                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, rq.getFullName(), rq.getToUser(), false, 0, false, true);
+                                    panelWrapper.revalidate();
+                                    panelWrapper.repaint();
+                                }
+                            }
+                            continue;
+                        }
+
+                        // Có đứa muốn kết bạn
+                        if (rq.getType() == RequestType.ASK_FRIEND_REQUEST) {
+                            // vẽ lại list bạn
+                            new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, rq.getFullName(), rq.getFromUser(), false, 0, false, false);
+                            panelWrapper.revalidate();
+                            panelWrapper.repaint();
+                        }
+
+                        if (rq.getType() == RequestType.ASK_FRIEND_ACCEPT) {
+
+                        }
+=======
                                 ArrayList<UserSimple> searchList = rq.getListFriend();
                                 if (searchList.size() > 0) {
                                     for (UserSimple userSimple : searchList) {
@@ -559,6 +605,7 @@ public class FormMainClient extends javax.swing.JFrame {
                                     }
                                 }
                             }
+>>>>>>> origin/master
 
                         } // end while(true)
                     }
@@ -744,7 +791,8 @@ public class FormMainClient extends javax.swing.JFrame {
 
     // Gửi yêu cầu kết bạn theo user
     public void askFriend(String friendUser) {
-        Request rq = new Request(RequestType.ASK_FRIEND, this.user, friendUser);
+        Request rq = new Request(RequestType.ASK_FRIEND_REQUEST, this.user, friendUser);
+        rq.setFullName(this.fullName);
         String json = gson.toJson(rq);
         this.os.println(json);
         this.os.flush();
@@ -812,6 +860,43 @@ public class FormMainClient extends javax.swing.JFrame {
             this.os.flush();
         } else {
             this.friendHashMap.get(friendUser).setVisible(true);
+        }
+    }
+
+    // Xử lý khi click vào PanelEntity
+    public void clickPanelEntity(int type, String friendUser, String friendName) {
+        if (type == 0) {
+            showFormChat(friendUser, friendName);
+        } else if (type == 1) {
+            ArrayList<String> msg = new ArrayList<>();
+            msg.add("Chấp nhận lời mời kết bạn từ: " + friendName);
+            new FormChoose(this, msg, new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    // Đồng ý
+                    Request rq = new Request(RequestType.ASK_FRIEND_ACCEPT, user, friendUser);
+                    rq.setAcceptFriend(true);
+                    String json = gson.toJson(rq);
+                    os.println(json);
+                    os.flush();                    
+                    
+                    return null;
+                }
+            }, new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    // Không đồng ý
+                    Request rq = new Request(RequestType.ASK_FRIEND_ACCEPT, user, friendUser);
+                    rq.setAcceptFriend(false);
+                    String json = gson.toJson(rq);
+                    os.println(json);
+                    os.flush();
+                    
+                    // Xóa khỏi list bạn
+                    
+                    return null;
+                }
+            });
         }
     }
 

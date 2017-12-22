@@ -34,6 +34,7 @@ public class Request {
     private String keyword;
     private boolean userExist;
     private boolean askFriend;
+    private boolean acceptFriend;
 
     public Request() {
 
@@ -229,6 +230,14 @@ public class Request {
 
     public void setAskFriend(boolean askFriend) {
         this.askFriend = askFriend;
+    }
+
+    public boolean isAcceptFriend() {
+        return acceptFriend;
+    }
+
+    public void setAcceptFriend(boolean acceptFriend) {
+        this.acceptFriend = acceptFriend;
     }
 
     @Override
