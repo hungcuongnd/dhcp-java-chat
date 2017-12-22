@@ -81,6 +81,7 @@ public class FormAddress extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER && !evt.isControlDown()) {
             this.formmain = new FormMainClient(this,txtAddress.getText());
             this.formmain.setLocationRelativeTo(null);
+            this.formmain.backgroundThread();
         }
     }//GEN-LAST:event_txtAddressKeyPressed
 
