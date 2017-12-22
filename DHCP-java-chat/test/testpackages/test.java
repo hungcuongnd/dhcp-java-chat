@@ -22,12 +22,9 @@ import utilities.UserSimple;
 public class test {
     
     public static void main(String[] args) {
-        tblUserDAO dao = new tblUserDAO();
-        List<Tbluser> ew = dao.findByFullName("C");
-        
-        for (Tbluser tbluser : ew) {
-            System.out.println(tbluser.getFullName());
-        }
+        // Lưu vào bảng friend
+        tblFriendDAO friendDAO = new tblFriendDAO();
+        friendDAO.saveFriend("phuong", "cuong");
     }
     
     
