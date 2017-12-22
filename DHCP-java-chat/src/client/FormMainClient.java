@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -29,11 +31,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import utilities.FileConverter;
@@ -52,14 +54,12 @@ public class FormMainClient extends javax.swing.JFrame {
     private HashMap<String, FormChatPrivacy> friendHashMap = new HashMap<>();
     private PrintWriter os = null;
     private Gson gson = new Gson();
-    private JList listFriend;
-    DefaultListModel<String> listModel = new DefaultListModel<>();
     List<UserSimple> listusersimple = null;
     String address;
-    
+
     FormLogin formlogin;
     FormAddress formaddress;
-    
+
     String friendToDel = null;
 
     // var for list friend
@@ -68,26 +68,35 @@ public class FormMainClient extends javax.swing.JFrame {
 
     FormRegister formRegister;
 
-    
+    FormSearch formSearch = new FormSearch(this);
+    public DefaultListModel listModel = new DefaultListModel();
+    java.util.Timer timer = new java.util.Timer();
+
     public FormMainClient(FormAddress add, String Address) {
         initComponents();
-        if(add != null){
+        if (add != null) {
             this.formaddress = add;
+            this.address = Address;
             this.formaddress.setVisible(false);
-            this.formlogin = new FormLogin(this,true);
+            this.formlogin = new FormLogin(this, true);
             this.formlogin.setLocationRelativeTo(null);
             this.formlogin.setVisible(true);
-        }else{
+        } else {
             this.formaddress = new FormAddress(this);
             this.formaddress.setLocationRelativeTo(null);
             this.formaddress.setVisible(true);
         }
         // create login form
-        
         txtFullname.setBorder(null);
-        // end create login form
 
+        // for search box
+        this.formSearch.getList().setModel(listModel);
+
+        this.btnAddFriend.setEnabled(false); // Ban đầu cho ẩn, gõ input thì mới ấn đc
+        // end for search box        
         backgroundThread();
+
+        // var for search friend
     }
 
     /**
@@ -190,7 +199,7 @@ public class FormMainClient extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtSlogan)
                     .addComponent(lblUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblUser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(txtFullname)))
         );
         jPanel1Layout.setVerticalGroup(
@@ -217,9 +226,14 @@ public class FormMainClient extends javax.swing.JFrame {
                 txtAddFriendActionPerformed(evt);
             }
         });
+        txtAddFriend.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAddFriendKeyReleased(evt);
+            }
+        });
 
         btnAddFriend.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnAddFriend.setText("Add");
+        btnAddFriend.setText("Thêm");
         btnAddFriend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddFriendActionPerformed(evt);
@@ -231,18 +245,17 @@ public class FormMainClient extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAddFriend)
-                .addContainerGap())
+                .addComponent(txtAddFriend)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddFriend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 20, Short.MAX_VALUE))
+                    .addComponent(txtAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -270,6 +283,12 @@ public class FormMainClient extends javax.swing.JFrame {
         return this.os;
     }
 
+    public void initialFormLogin() {
+        this.formlogin = new FormLogin(this, true);
+        this.formlogin.setLocationRelativeTo(null);
+        this.formlogin.setVisible(true);
+    }
+
 // begin thread in background
     public void backgroundThread() {
 
@@ -280,26 +299,30 @@ public class FormMainClient extends javax.swing.JFrame {
                 BufferedReader is = null;
 
                 try {
-                    sk = new Socket(address, 6969);
-                    is = new BufferedReader(new InputStreamReader(sk.getInputStream()));
-                    os = new PrintWriter(sk.getOutputStream());
+                    if (address != null) {
+                        sk = new Socket(address, 6969);
+                        is = new BufferedReader(new InputStreamReader(sk.getInputStream()));
+                        os = new PrintWriter(sk.getOutputStream());
 
-                    UUID randomUUID = UUID.randomUUID();
-                    id = randomUUID.toString();
+                        UUID randomUUID = UUID.randomUUID();
+                        id = randomUUID.toString();
 
-                    // Ngay khi kết nối đến server, gửi luôn id
-                    Request rqLogin = new Request();
-                    rqLogin.id = id;
-                    String jsonLogin = gson.toJson(rqLogin);
+                        // Ngay khi kết nối đến server, gửi luôn id
+                        Request rqLogin = new Request();
+                        rqLogin.id = id;
+                        String jsonLogin = gson.toJson(rqLogin);
 
-                    os.println(jsonLogin);
-                    os.flush();
+                        os.println(jsonLogin);
+                        os.flush();
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 System.out.println("Client Address : " + address);
+                // Đảm bảo đã kết nối thì mới hiện FormLogin
+                //initialFormLogin();
 
                 try {
                     // Gửi tin nhắn: gửi tại form chat                    
@@ -357,7 +380,7 @@ public class FormMainClient extends javax.swing.JFrame {
                                 listusersimple = rq.getListFriend();
                                 for (UserSimple user : listusersimple) {
                                     // Khởi tạo panelEntity (tự động add vào panelWrapper)
-                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0);
+                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0, true);
                                 }
 
                                 // Hiện FormMainClient, ẩn FormLogin
@@ -381,12 +404,6 @@ public class FormMainClient extends javax.swing.JFrame {
                             friendHashMap.get(userSend).updateTxtContentReceive(rq);
                             continue;
                         }
-                        // Nếu là kiểu yêu cầu kết bạn
-                        if (rq.getType() == RequestType.ASK_FRIEND) {
-                            String newFriend = rq.getFromUser();
-                            listModel.addElement(newFriend);
-                            continue;
-                        }
 
                         //Nếu là kiểu xóa bạn
                         if (rq.getType() == RequestType.DELETE_FRIEND) {
@@ -400,6 +417,7 @@ public class FormMainClient extends javax.swing.JFrame {
                                 }
                             }
                         }
+
                         // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
                         if (rq.getType() == RequestType.GET_FRIEND_INFO) {
                             ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
@@ -496,6 +514,43 @@ public class FormMainClient extends javax.swing.JFrame {
                             continue;
                         }
 
+                        // Nếu là kiểu search friend
+                        if (rq.getType() == RequestType.GET_SEARCH_LIST) {
+                            // Reset list
+                            listModel.removeAllElements();
+
+                            ArrayList<UserSimple> searchList = rq.getListFriend();
+                            if (searchList.size() > 0) {
+                                for (UserSimple userSimple : searchList) {
+                                    listModel.addElement(userSimple);
+                                }
+                            } else {
+                                listModel.addElement("Không tìm thấy user");
+                            }
+
+                            // Có kết thì update lại formsearch
+                            updateFormSearch();
+                            continue;
+                        }
+
+                        // Nếu là kiểu yêu cầu kết bạn
+                        if (rq.getType() == RequestType.ASK_FRIEND) {
+//                            String newFriend = rq.getFromUser();
+//                            listModel.addElement(newFriend);
+//                            continue;
+                            if (!rq.isUserExist()) {
+                                System.out.println("user KO ton tai");
+                            } else {
+                                System.out.println("user ton tai");
+                                // Nếu yêu cầu kết bạn đã đc gửi
+                                if (rq.isAskFriend()) {
+                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, "Huong Ly - Đã gửi yêu cầu kết bạn", "ly", false, 0, false);
+                                    panelWrapper.revalidate();
+                                    panelWrapper.repaint();
+                                }
+                            }
+                        }
+
                     } // end while(true)
 
                 } catch (IOException e) {
@@ -516,22 +571,18 @@ public class FormMainClient extends javax.swing.JFrame {
         }
         ).start();
     }
-    // end thread in background
-    //    private void askFriend() {
-    //        String newFriend = this.txtAddFriend.getText();
-    //        Request rqAskFriend = new Request(this.user, newFriend, null, RequestType.ASKFRIEND, null);
-    //        String jsonAskFriend = gson.toJson(rqAskFriend);
-    //        os.println(jsonAskFriend);
-    //        os.flush();
-    //        this.listModel.addElement(newFriend);
-    //    }    
+    // end thread in background  
 
     private void txtAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddFriendActionPerformed
 //        this.askFriend();
     }//GEN-LAST:event_txtAddFriendActionPerformed
 
     private void btnAddFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFriendActionPerformed
-
+        String user = this.txtAddFriend.getText();
+        if (user != null && !user.equals("")) {
+            askFriend(user);
+            this.formSearch.setVisible(false);
+        }
     }//GEN-LAST:event_btnAddFriendActionPerformed
 
     private void txtSloganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSloganActionPerformed
@@ -619,6 +670,75 @@ public class FormMainClient extends javax.swing.JFrame {
             changeSlogan(txtSlogan.getText());
         }
     }//GEN-LAST:event_txtSloganKeyPressed
+
+    private void txtAddFriendKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAddFriendKeyReleased
+        // clear any schedule before
+        this.timer.cancel();
+        this.timer.purge();
+        // clear listModel
+        listModel.removeAllElements();
+
+        // get keyword from textfield, check null and make request
+        String keyword = txtAddFriend.getText();
+        if (keyword.equals("") || keyword == null) {
+            // hide FormSearch
+            formSearch.setVisible(false);
+            // hide nút thêm
+            this.btnAddFriend.setEnabled(false);
+
+        } else {
+            // show nút thêm
+            this.btnAddFriend.setEnabled(true);
+            this.btnAddFriend.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+            // drop down list
+            listModel.addElement("Đang tìm...");
+            showFormSearch();
+            this.timer = new java.util.Timer();
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    getSearchList(keyword);
+                }
+            }, 360);
+        }
+    }//GEN-LAST:event_txtAddFriendKeyReleased
+
+    // Hiện form search ngay dưới textfield
+    public void showFormSearch() {
+        formSearch.setSize(txtAddFriend.getWidth(), 34 + 22);
+        formSearch.setLocation(txtAddFriend.getLocationOnScreen().x, txtAddFriend.getLocationOnScreen().y + txtAddFriend.getHeight());
+        formSearch.setVisible(true);
+        formSearch.setFocusableWindowState(false);
+        txtAddFriend.requestFocus();
+        formSearch.setVisible(true);
+    }
+
+    // Update form search
+    public void updateFormSearch() {
+        int h = 34 + listModel.getSize() * 22;
+        if (h > 34 + 10 * 22) {
+            h = 34 + 10 * 22;
+        }
+        formSearch.setSize(txtAddFriend.getWidth(), h);
+    }
+
+    // Gửi yêu cầu lấy list user theo từ khóa
+    public void getSearchList(String keyword) {
+        Request rq = new Request(RequestType.GET_SEARCH_LIST, this.user, null);
+        rq.setKeyword(keyword);
+        String json = gson.toJson(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
+
+    // Gửi yêu cầu kết bạn theo user
+    public void askFriend(String friendUser) {
+        Request rq = new Request(RequestType.ASK_FRIEND, this.user, friendUser);
+        String json = gson.toJson(rq);
+        this.os.println(json);
+        this.os.flush();
+    }
 
     public void exit() {
         System.exit(0);
@@ -738,7 +858,7 @@ public class FormMainClient extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormMainClient(null,null);
+                new FormMainClient(null, null);
 
             }
         });
@@ -769,6 +889,10 @@ public class FormMainClient extends javax.swing.JFrame {
 
     public HashMap<Integer, PanelEntity> getPanelGroupMap() {
         return panelGroupMap;
+    }
+
+    public JTextField getTxtAddFriend() {
+        return txtAddFriend;
     }
 
 }

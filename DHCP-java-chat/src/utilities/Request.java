@@ -14,28 +14,13 @@ public class Request {
     private String toGroup;
     private Content content;
     private Tbluser user;
-    private boolean isRegisterSuccess; 
+    private boolean isRegisterSuccess;
     private boolean isDeletedFriend;
     private String stringOfFile;
     private String slogan;
 
-    public String getStringOfFile() {
-        return stringOfFile;
-    }
-
-    public void setStringOfFile(String stringOfFile) {
-        this.stringOfFile = stringOfFile;
-    }
     public Tbluser getUser() {
         return user;
-    }
-
-    public boolean getIsIsRegisterSuccess() {
-        return isRegisterSuccess;
-    }
-
-    public void setIsRegisterSuccess(boolean isRegisterSuccess) {
-        this.isRegisterSuccess = isRegisterSuccess;
     }
 
     public void setUser(Tbluser user) {
@@ -50,6 +35,11 @@ public class Request {
     private String avatar = "";
     private String extension = "";
     private int loadMessageNum;
+
+    // for search friend
+    private String keyword;
+    private boolean userExist;
+    private boolean askFriend;
 
     public Request() {
 
@@ -116,8 +106,6 @@ public class Request {
     public void setIsDeletedFriend(boolean isDeletedFriend) {
         this.isDeletedFriend = isDeletedFriend;
     }
-    
-    
 
     public boolean isLogin() {
         return login;
@@ -131,7 +119,6 @@ public class Request {
         this.slogan = slogan;
     }
 
-    
     public void setLogin(boolean login) {
         this.login = login;
     }
@@ -167,7 +154,7 @@ public class Request {
     public void setExtension(String extension) {
         this.extension = extension;
     }
-    
+
     public List<HistoryChat> getChatHistory() {
         return chatHistory;
     }
@@ -182,6 +169,54 @@ public class Request {
 
     public void setLoadMessageNum(int loadMessageNum) {
         this.loadMessageNum = loadMessageNum;
+    }
+
+    public String getStringOfFile() {
+        return stringOfFile;
+    }
+
+    public void setStringOfFile(String stringOfFile) {
+        this.stringOfFile = stringOfFile;
+    }
+
+    public boolean getIsIsRegisterSuccess() {
+        return isRegisterSuccess;
+    }
+
+    public void setIsRegisterSuccess(boolean isRegisterSuccess) {
+        this.isRegisterSuccess = isRegisterSuccess;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public boolean isUserExist() {
+        return userExist;
+    }
+
+    public void setUserExist(boolean userExist) {
+        this.userExist = userExist;
+    }
+
+    public boolean isAskFriend() {
+        return askFriend;
+    }
+
+    public void setAskFriend(boolean askFriend) {
+        this.askFriend = askFriend;
     }
 
     @Override

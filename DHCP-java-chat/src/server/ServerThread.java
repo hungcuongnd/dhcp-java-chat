@@ -1,4 +1,3 @@
-
 package server;
 
 import com.google.gson.Gson;
@@ -90,7 +89,7 @@ public class ServerThread extends Thread {
     public boolean isRegisterSucces() {
         return this.registerStatus;
     }
-    
+
     @Override
     public void run() {
         try {
@@ -133,22 +132,22 @@ public class ServerThread extends Thread {
 
                         // Lấy list bạn                        
                         this.listTblUser = listFriendDAO.getListFriend(user);
-                        
+
                         // tbluser ko thể convert sang json, phải dùng UserSimple thay thế
                         ArrayList<UserSimple> listUserSimple = new ArrayList<>();
-                        
+
                         // Kiểm tra từng đứa bạn có online ko, rồi gửi cho client để vẽ list bạn
                         for (Tbluser tbluser : listTblUser) {
                             if (hashMap.get(tbluser.getUserName()) != null) {
                                 // Nếu online
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true,true));                                                                
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true, true));
                             } else {
                                 // Nếu offline
-                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false,true));
+                                listUserSimple.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), false, true));
                             }
                         }
                         rqResponse.setListFriend(listUserSimple);
-                        
+
                         // Báo cho tất cả bạn bè biết nó đang online
                         this.alertStatusToFriends(true);
                     }
@@ -256,7 +255,7 @@ public class ServerThread extends Thread {
                     Tbluser userFriend = userDAO.findByName(rq.getToUser());
                     rq.setAvatar(FileConverter.fileToString("images/" + userFriend.getAvartar()));
                     String jsonResponse = gson.toJson(rq);
-                    
+
                     // Gửi lại cho chính client gửi request thông tin của bạn hắn
                     if (this.hashMap.get(rq.getFromUser()) != null) {
                         this.hashMap.get(rq.getFromUser()).getOs().println(jsonResponse);
@@ -264,7 +263,7 @@ public class ServerThread extends Thread {
                     }
                     continue;
                 }
-                
+
                 // Nếu là kiểu đổi avatar
                 if (rq.getType() == RequestType.CHANGE_AVATAR) {
                     // 1. Lưu ảnh và folde images
@@ -274,13 +273,13 @@ public class ServerThread extends Thread {
                     String fileName = rq.getFromUser() + "." + rq.getExtension();
                     Path path = Paths.get("images/" + fileName);
                     Files.write(path, decode);
-                    
+
                     // 2. Update db
                     tblUserDAO userDAO = new tblUserDAO();
                     Tbluser tblUser = userDAO.findByName(rq.getFromUser());
                     tblUser.setAvartar(fileName);
                     userDAO.updateUser(tblUser);
-                    
+
                     // 3. Truyền lại avatar mới
                     // Xài lại cái request vừa nhận
                     rq.setAvatar(FileConverter.fileToString("images/" + fileName));
@@ -291,8 +290,8 @@ public class ServerThread extends Thread {
                 }
 
                 //Nếu là xóa friend thì xóa.
-                if(rq.getType() == RequestType.DELETE_FRIEND){
-                    if(tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser())){
+                if (rq.getType() == RequestType.DELETE_FRIEND) {
+                    if (tblfriend.deleteFriend(rq.getFromUser(), rq.getToUser())) {
                         rq.setIsDeletedFriend(true);
                         String jsonResponse = gson.toJson(rq);
                         this.os.println(jsonResponse);
@@ -300,7 +299,7 @@ public class ServerThread extends Thread {
                         continue;
                     }
                 }
-                
+
                 //Nếu là đổi Fullname thì.
                 if(rq.getType() == RequestType.CHANGE_FULLNAME){
                     tblUserDAO DAOuser = new tblUserDAO();
@@ -308,38 +307,37 @@ public class ServerThread extends Thread {
                     newuser.setFullName(rq.getFullName());
                     DAOuser.updateUser(newuser);
                     newuser = DAOuser.findByName(rq.getFromUser());
-                    
+
                     rq.setFullName(newuser.getFullName());
                     String json = gson.toJson(rq);
                     this.os.println(json);
                     this.os.flush();
                 }
-                
-                if(rq.getType() == RequestType.CHANGE_SLOGAN){
+
+                if (rq.getType() == RequestType.CHANGE_SLOGAN) {
                     tblUserDAO DAOuser = new tblUserDAO();
                     Tbluser newuser = DAOuser.findByName(rq.getFromUser());
                     newuser.setSlogan(rq.getSlogan());
                     DAOuser.updateUser(newuser);
                     newuser = DAOuser.findByName(rq.getFromUser());
-                    
+
                     rq.setSlogan(newuser.getSlogan());
                     System.out.println(newuser.getSlogan());
                     String json = gson.toJson(rq);
                     this.os.println(json);
                     this.os.flush();
                 }
-                
+
                 // Nếu là kiểu lấy lịch sử chat
                 if (rq.getType() == RequestType.HISTORY) {
-                    
+
                     tblUserUserDAO userUserDAO = new tblUserUserDAO();
                     List<TbluserUser> listChatHistory = userUserDAO.getAllMessage1v1(rq.getFromUser(), rq.getToUser(), rq.getLoadMessageNum());
                     //loadNumber += 10;
-                    if(listChatHistory != null)
-                    {
+                    if (listChatHistory != null) {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistory) {
-                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
+                            historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName() //, tbluserUser.getTbluser1().getUserName()
                                 //, tbluserUser.getTbluser1().getUserName()
                                 , tbluserUser.getContent()
                                 , tbluserUser.getStatus()
@@ -348,14 +346,13 @@ public class ServerThread extends Thread {
                         rq.setChatHistory(historyChatList);
                     }
                 }
-                    // Nếu là kiểu lấy lịch sử chat chua doc
+                // Nếu là kiểu lấy lịch sử chat chua doc
                 if (rq.getType() == RequestType.UNREADMSG) {
-                    
+
                     tblUserUserDAO userUserDAO1 = new tblUserUserDAO();
                     List<TbluserUser> listChatHistoryUnRead = userUserDAO.checkUnreadMessage1v1(rq.getFromUser());
                     //loadNumber += 10;
-                    if(listChatHistoryUnRead != null)
-                    {
+                    if (listChatHistoryUnRead != null) {
                         List<HistoryChat> historyChatList = new ArrayList<>();
                         for (TbluserUser tbluserUser : listChatHistoryUnRead) {
                             historyChatList.add(new HistoryChat(tbluserUser.getTbluser().getUserName()
@@ -366,18 +363,58 @@ public class ServerThread extends Thread {
                         }
                         rq.setChatHistory(historyChatList);
                     }
-                }
-                
-                 // 2. Update db
-                    
-                    
+
+                    // 2. Update db
                     // 3. Truyền lại lich su chat
                     // Xài lại cái request vừa nhận
-                    
                     String jsonResponse = gson.toJson(rq);
                     this.os.println(jsonResponse);
                     this.os.flush();
                     continue;
+                }
+
+                // Nếu là kiểu search friend
+                if (rq.getType() == RequestType.GET_SEARCH_LIST) {
+                    String keyword = rq.getKeyword();
+                    // vào db lấy ra list user thỏa mãn từ khóa
+                    tblUserDAO userDAO = new tblUserDAO();
+                    List<Tbluser> tbluserList = userDAO.findByFullName(keyword,rq.getFromUser());
+
+                    // trả lại kết quả cho client dạng List<UserSimple>
+                    ArrayList<UserSimple> userSimpleList = new ArrayList<>();
+                    if (tbluserList != null) {
+                        for (Tbluser tbluser : tbluserList) {
+                            userSimpleList.add(new UserSimple(tbluser.getUserName(), tbluser.getFullName(), true, true));
+                        }
+                    }
+
+                    rq.setListFriend(userSimpleList);
+
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                    continue;
+                }
+
+                // Nếu là kiểu ask friend
+                if (rq.getType() == RequestType.ASK_FRIEND) {
+                    String friendUser = rq.getToUser();
+                    // check xem có user đó trong db ko
+
+                    // Nếu ko có, báo về client
+                    if (!friendUser.equals("ly")) {
+                        rq.setUserExist(false);
+                    } else {
+                        rq.setUserExist(true);
+                        // Nếu lưu thành công
+                        rq.setAskFriend(true);
+                    }
+
+                    String json = gson.toJson(rq);
+                    this.os.println(json);
+                    this.os.flush();
+                    continue;
+                }
             }
 
         } catch (IOException e) {
@@ -400,22 +437,20 @@ public class ServerThread extends Thread {
                     s.close();
                 }
 
-                
-
                 // Nếu trước đó đã đăng nhập, thì ghi log đăng xuất
                 if (isLogin()) {
                     // xóa khỏi mảng hashMap
                     this.hashMap.remove(this.user);
-                    
+
                     this.formMainServer.updateTextArea(this.user + " đăng xuất");
 
                     // update lại total connection (giảm đi 1)
                     this.formMainServer.totalConnection--;
                     this.formMainServer.updateTotalConnection();
-                    
+
                     // Thông báo cho bạn bè thằng client này biết nó đã đăng xuất
                     this.alertStatusToFriends(false);
-                    
+
                 } else {
                     // xóa khỏi mảng hashMap
                     this.hashMap.remove(this.id);
@@ -426,15 +461,15 @@ public class ServerThread extends Thread {
             }
         }//end finally
     }// end void run
-    
+
     public void alertStatusToFriends(boolean status) {
         // Lấy lại list bạn (ko tận dụng lại được listTblUser trước đó vì có thể đã thay đổi)
         this.listTblUser = this.listFriendDAO.getListFriend(this.user);
-        
+
         // Tạo request, user nhận để trống, tí điền
         Request rq = new Request(RequestType.STATUS, this.user, null);
         rq.setLogin(status);
-        
+
         // Gửi cho từng đứa
         for (Tbluser tbluser : this.listTblUser) {
             String userFriend = tbluser.getUserName();
@@ -444,7 +479,7 @@ public class ServerThread extends Thread {
                 this.hashMap.get(userFriend).getOs().println(json);
                 this.hashMap.get(userFriend).getOs().flush();
             }
-        }        
+        }
     }
 
 }

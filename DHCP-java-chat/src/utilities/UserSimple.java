@@ -19,11 +19,11 @@ public class UserSimple {
     public UserSimple() {
     }
 
-    public UserSimple(String user, String fullName, boolean online, boolean issendrequest) {
+    public UserSimple(String user, String fullName, boolean online, boolean isSendRequest) {
         this.user = user;
         this.fullName = fullName;
         this.online = online;
-        this.isSendRequest = issendrequest;
+        this.isSendRequest = isSendRequest;
     }
 
     public String getUser() {
@@ -57,8 +57,6 @@ public class UserSimple {
     public void setIsSendRequest(boolean isSendRequest) {
         this.isSendRequest = isSendRequest;
     }
-    
-    
 
     @Override
     public String toString() {

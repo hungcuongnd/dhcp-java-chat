@@ -23,7 +23,7 @@ public class test {
     
     public static void main(String[] args) {
         tblUserDAO dao = new tblUserDAO();
-        List<Tbluser> ew = dao.findByFullName("C");
+        List<Tbluser> ew = dao.findByFullName("C","cuong");
         
         for (Tbluser tbluser : ew) {
             System.out.println(tbluser.getFullName());
