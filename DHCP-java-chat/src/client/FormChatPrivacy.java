@@ -90,17 +90,18 @@ public class FormChatPrivacy extends javax.swing.JFrame {
         fontSizeModel.addElement("16");
         fontSizeModel.addElement("18");
         fontSizeModel.addElement("20");
+        fontSizeModel.addElement("22");
+        fontSizeModel.addElement("24");
+        fontSizeModel.addElement("26");
+        fontSizeModel.addElement("28");
         cboSize.setModel(fontSizeModel);
 
         GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Font[] fonts = e.getAllFonts(); // Get the fonts
-//        for (Font f : fonts) {
-//          dlm.addElement(f.getFontName());
-//        }
-        //for(int i = 80; i < fonts.length; i ++)
-        //{
-        //    fontModel.addElement(fonts[i].getFontName());
-        //}
+        for (Font f : fonts) {
+          fontModel.addElement(f.getFontName());
+        }
+
         fontModel.addElement("Arial");
         cboFont.setModel(fontModel);
         cboFont.setSelectedItem("Arial");

@@ -34,12 +34,10 @@ public class tblUserDAO {
         }
     }
 
-    public List<Tbluser> findByFullName(String target,String username) {
+    public List<Tbluser> findByFullName(String target) {
         try {
             List<Tbluser> list = null;
-            list = em.createNativeQuery("Select * from tbluser t where (t.user_name like '%"+target+"%' OR t.full_name like '%"+target+"%') AND t.user_name != '"+username+
-                    "' AND t.user_name NOT IN (SELECT user_name_1 FROM tblfriend WHERE user_name_2 = '"+username+
-                    "') AND t.user_name NOT IN (SELECT user_name_2 FROM tblfriend WHERE user_name_1 = '"+username+"')", Tbluser.class).getResultList();
+            list = em.createQuery("Select t from Tbluser t where t.userName like '%"+target+"%' OR t.fullName like '%"+target+"%'", Tbluser.class).getResultList();
             return list;
         } catch (Exception e) {
             return null;

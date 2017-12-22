@@ -177,36 +177,6 @@ public class ServerThread extends Thread {
                     }
                     continue;
                 }
-                if (rq.getType() == RequestType.MESSAGE) {
-                    String friend = rq.getToUser();
-
-                    System.out.println("server da nhan tn");
-
-                    if (this.hashMap.get(friend) != null) {
-                        this.hashMap.get(friend).getOs().println(json);
-                        this.hashMap.get(friend).getOs().flush();
-                        System.out.println("server gui tn");
-
-                        // Lưu vào db
-                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 0, rq.getContent().getSas().toString());
-                    }
-                    continue;
-                }
-                if (rq.getType() == RequestType.MESSAGE) {
-                    String friend = rq.getToUser();
-
-                    System.out.println("server da nhan tn");
-
-                    if (this.hashMap.get(friend) != null) {
-                        this.hashMap.get(friend).getOs().println(json);
-                        this.hashMap.get(friend).getOs().flush();
-                        System.out.println("server gui tn");
-
-                        // Lưu vào db
-                        userUserDAO.saveMassage1v1(rq.getFromUser(), rq.getToUser(), rq.getContent().getContent(), 0, rq.getContent().getSas().toString());
-                    }
-                    continue;
-                }
                 if (rq.getType() == RequestType.REGISTER) {
                     tblUserDAO userDAO = new tblUserDAO();                    
                     Tbluser userGet = new Tbluser();
@@ -345,6 +315,12 @@ public class ServerThread extends Thread {
                         }
                         rq.setChatHistory(historyChatList);
                     }
+                    
+                    String jsonResponse = gson.toJson(rq);
+                    this.os.println(jsonResponse);
+                    this.os.flush();
+                    continue;
+                    
                 }
                 // Nếu là kiểu lấy lịch sử chat chua doc
                 if (rq.getType() == RequestType.UNREADMSG) {
@@ -378,7 +354,7 @@ public class ServerThread extends Thread {
                     String keyword = rq.getKeyword();
                     // vào db lấy ra list user thỏa mãn từ khóa
                     tblUserDAO userDAO = new tblUserDAO();
-                    List<Tbluser> tbluserList = userDAO.findByFullName(keyword,rq.getFromUser());
+                    List<Tbluser> tbluserList = userDAO.findByFullName(keyword);
 
                     // trả lại kết quả cho client dạng List<UserSimple>
                     ArrayList<UserSimple> userSimpleList = new ArrayList<>();

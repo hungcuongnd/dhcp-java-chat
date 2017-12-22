@@ -315,7 +315,6 @@ public class FormMainClient extends javax.swing.JFrame {
                         os.println(jsonLogin);
                         os.flush();
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -327,244 +326,246 @@ public class FormMainClient extends javax.swing.JFrame {
                 try {
                     // Gửi tin nhắn: gửi tại form chat                    
 
-                    // Nhận dữ liệu từ server dạng json                
-                    while (true) {
-                        String json = is.readLine();
-                        Request rq = gson.fromJson(json, Request.class);
+                    // Nhận dữ liệu từ server dạng json 
+                    if (address != null) {
+                        while (true) {
+                            String json = is.readLine();
+                            Request rq = gson.fromJson(json, Request.class);
 
-                        if (rq.getType() == RequestType.REGISTER) {
-                            if (rq.getIsIsRegisterSuccess()) {
-                                formRegister.throwMessage(true);
-                            } else {
-                                formRegister.throwMessage(false);
-                            }
-                        }
-                        // Nếu là kiểu đăng nhập
-                        if (rq.getType() == RequestType.LOGIN) {
-
-                            // server báo login thất bại
-                            if (!rq.isLogin()) {
-                                formlogin.throwMessage();
-                                System.out.println("login that bai");
-                            } else {
-
-                                // server báo login thành công
-                                System.out.println("login thanh cong");
-
-                                // Đặt fullname & username
-                                if (user != null) {
-                                    lblUser.setText(user);
-                                }
-
-                                // Lấy thông tin user
-                                String fullname = rq.getFullName();
-                                if (fullname != null && !fullname.isEmpty()) {
-                                    txtFullname.setText(fullname);
-                                }
-
-                                String Slogan = rq.getSlogan();
-                                if (Slogan != null && !Slogan.isEmpty()) {
-                                    txtSlogan.setText(Slogan);
-                                }
-
-                                // Đặt avatar có ảnh thì lấy ko thì lấy ảnh mặc định
-                                if (rq.getAvatar() != null && !rq.getAvatar().isEmpty()) {
-                                    ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
-                                    avatar = scaleImage(avatar);
-                                    lblAvatar.setIcon(avatar);
+                            if (rq.getType() == RequestType.REGISTER) {
+                                if (rq.getIsIsRegisterSuccess()) {
+                                    formRegister.throwMessage(true);
                                 } else {
-                                    lblAvatar.setIcon(new ImageIcon("images/avatar-100.jpg"));
-                                }
-
-                                // Vẽ list bạn
-                                listusersimple = rq.getListFriend();
-                                for (UserSimple user : listusersimple) {
-                                    // Khởi tạo panelEntity (tự động add vào panelWrapper)
-                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0, true);
-                                }
-
-                                // Hiện FormMainClient, ẩn FormLogin
-                                showForm();
-                                formlogin.setVisible(false);
-                            }
-                            continue;
-                        }
-
-                        // Nếu là kiểu massage
-                        if (rq.getType() == RequestType.MESSAGE) {
-                            String userSend = rq.getFromUser();
-
-                            // Nếu FormChat chưa từng được bật thì bật lên
-                            if (friendHashMap.get(userSend) == null) {
-                                String friendName = panelFriendMap.get(userSend).getName();
-                                showFormChat(userSend, friendName);
-                            }
-
-                            // update lịch sử tin nhắn
-                            friendHashMap.get(userSend).updateTxtContentReceive(rq);
-                            continue;
-                        }
-
-                        //Nếu là kiểu xóa bạn
-                        if (rq.getType() == RequestType.DELETE_FRIEND) {
-                            if (rq.isIsDeletedFriend()) {
-                                if (listusersimple != null) {
-                                    String delfriend = rq.getToUser();
-                                    panelWrapper.remove(panelFriendMap.get(delfriend));
-                                    panelWrapper.revalidate();
-                                    panelWrapper.repaint();
-                                    continue;
+                                    formRegister.throwMessage(false);
                                 }
                             }
-                        }
+                            // Nếu là kiểu đăng nhập
+                            if (rq.getType() == RequestType.LOGIN) {
 
-                        // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
-                        if (rq.getType() == RequestType.GET_FRIEND_INFO) {
-                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
-                            if (friendHashMap.get(rq.getToUser()) != null) {
+                                // server báo login thất bại
+                                if (!rq.isLogin()) {
+                                    formlogin.throwMessage();
+                                    System.out.println("login that bai");
+                                } else {
+
+                                    // server báo login thành công
+                                    System.out.println("login thanh cong");
+
+                                    // Đặt fullname & username
+                                    if (user != null) {
+                                        lblUser.setText(user);
+                                    }
+
+                                    // Lấy thông tin user
+                                    String fullname = rq.getFullName();
+                                    if (fullname != null && !fullname.isEmpty()) {
+                                        txtFullname.setText(fullname);
+                                    }
+
+                                    String Slogan = rq.getSlogan();
+                                    if (Slogan != null && !Slogan.isEmpty()) {
+                                        txtSlogan.setText(Slogan);
+                                    }
+
+                                    // Đặt avatar có ảnh thì lấy ko thì lấy ảnh mặc định
+                                    if (rq.getAvatar() != null && !rq.getAvatar().isEmpty()) {
+                                        ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+                                        avatar = scaleImage(avatar);
+                                        lblAvatar.setIcon(avatar);
+                                    } else {
+                                        lblAvatar.setIcon(new ImageIcon("images/avatar-100.jpg"));
+                                    }
+
+                                    // Vẽ list bạn
+                                    listusersimple = rq.getListFriend();
+                                    for (UserSimple user : listusersimple) {
+                                        // Khởi tạo panelEntity (tự động add vào panelWrapper)
+                                        new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, user.getFullName(), user.getUser(), user.isOnline(), 0, true);
+                                    }
+
+                                    // Hiện FormMainClient, ẩn FormLogin
+                                    showForm();
+                                    formlogin.setVisible(false);
+                                }
+                                continue;
+                            }
+
+                            // Nếu là kiểu massage
+                            if (rq.getType() == RequestType.MESSAGE) {
+                                String userSend = rq.getFromUser();
+
+                                // Nếu FormChat chưa từng được bật thì bật lên
+                                if (friendHashMap.get(userSend) == null) {
+                                    String friendName = panelFriendMap.get(userSend).getName();
+                                    showFormChat(userSend, friendName);
+                                }
+
+                                // update lịch sử tin nhắn
+                                friendHashMap.get(userSend).updateTxtContentReceive(rq);
+                                continue;
+                            }
+
+                            //Nếu là kiểu xóa bạn
+                            if (rq.getType() == RequestType.DELETE_FRIEND) {
+                                if (rq.isIsDeletedFriend()) {
+                                    if (listusersimple != null) {
+                                        String delfriend = rq.getToUser();
+                                        panelWrapper.remove(panelFriendMap.get(delfriend));
+                                        panelWrapper.revalidate();
+                                        panelWrapper.repaint();
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            // Nếu là kiểu lấy thông tin bạn (user + name đã có, cần có avatar)
+                            if (rq.getType() == RequestType.GET_FRIEND_INFO) {
+                                ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
+                                if (friendHashMap.get(rq.getToUser()) != null) {
+                                    if (avatar != null) {
+                                        avatar = scaleImage(avatar);
+                                        friendHashMap.get(rq.getToUser()).setAvatar(avatar);
+                                    } else {
+                                        // Nhét ảnh mặc định vào FormChat
+                                        friendHashMap.get(rq.getToUser()).setAvatar(new ImageIcon("images/avatar-100.jpg"));
+                                    }
+                                }
+                                continue;
+                            }
+
+                            // Nếu là kiểu thông báo trạng thái online
+                            if (rq.getType() == RequestType.STATUS) {
+                                String friendUser = rq.getFromUser();
+                                boolean stt = rq.isLogin();
+                                panelFriendMap.get(friendUser).updateLblIcon(stt);
+                                panelWrapper.revalidate();
+                                panelWrapper.repaint();
+                                continue;
+                            }
+
+                            // Nếu là kiểu server trả kết quả đổi avatar
+                            if (rq.getType() == RequestType.CHANGE_AVATAR) {
+                                ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
                                 if (avatar != null) {
                                     avatar = scaleImage(avatar);
-                                    friendHashMap.get(rq.getToUser()).setAvatar(avatar);
-                                } else {
-                                    // Nhét ảnh mặc định vào FormChat
-                                    friendHashMap.get(rq.getToUser()).setAvatar(new ImageIcon("images/avatar-100.jpg"));
+                                    lblAvatar.setIcon(avatar);
+                                    new QuickPopup("Đổi avatar thành công");
                                 }
                             }
-                            continue;
-                        }
 
-                        // Nếu là kiểu thông báo trạng thái online
-                        if (rq.getType() == RequestType.STATUS) {
-                            String friendUser = rq.getFromUser();
-                            boolean stt = rq.isLogin();
-                            panelFriendMap.get(friendUser).updateLblIcon(stt);
-                            panelWrapper.revalidate();
-                            panelWrapper.repaint();
-                            continue;
-                        }
-
-                        // Nếu là kiểu server trả kết quả đổi avatar
-                        if (rq.getType() == RequestType.CHANGE_AVATAR) {
-                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
-                            if (avatar != null) {
-                                avatar = scaleImage(avatar);
-                                lblAvatar.setIcon(avatar);
-                                new QuickPopup("Đổi avatar thành công");
-                            }
-                        }
-
-                        if (rq.getType() == RequestType.SEND_FILE) {
+                            if (rq.getType() == RequestType.SEND_FILE) {
 //                            ImageIcon avatar = FileConverter.stringToImage(rq.getAvatar());
 //                            if (avatar != null) {
 //                                avatar = scaleImage(avatar);
 //                                lblAvatar.setIcon(avatar);
 //                            }
-                            String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
-                                    + "\n Ảnh sẽ tự động lưu tại D:\\";
-                            int dialogButton = JOptionPane.YES_NO_OPTION;
-                            int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
-                            if (dialogResult == 0) {
-                                System.out.println("Yes option");
+                                String message = "Bạn có đồng ý nhận file từ " + rq.getFromUser() + " không?"
+                                        + "\n Ảnh sẽ tự động lưu tại D:\\";
+                                int dialogButton = JOptionPane.YES_NO_OPTION;
+                                int dialogResult = JOptionPane.showConfirmDialog(null, message, "Thông báo", dialogButton);
+                                if (dialogResult == 0) {
+                                    System.out.println("Yes option");
 //                                String file = FileConverter(Frq.getAvatar());
-                                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                                byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
-                                String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
-                                Path path = Paths.get("D:\\" + fileName);
-                                Files.write(path, decode);
-                            } else {
-                                System.out.println("No Option");
+                                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                    byte[] decode = Base64.getDecoder().decode(rq.getStringOfFile());
+                                    String fileName = rq.getFromUser() + "-" + rq.getToUser() + "-" + timestamp.getTime() + "." + rq.getExtension() + "";
+                                    Path path = Paths.get("D:\\" + fileName);
+                                    Files.write(path, decode);
+                                } else {
+                                    System.out.println("No Option");
 
-                            }
-                        }
-                        //Nếu trả về fullname
-                        if (rq.getType() == RequestType.CHANGE_FULLNAME) {
-                            txtFullname.setText(rq.getFullName());
-                            new QuickPopup("Cập nhật tên thành công thành công");
-                            continue;
-                        }
-
-                        //Nếu trả về slogan
-                        if (rq.getType() == RequestType.CHANGE_SLOGAN) {
-                            txtSlogan.setText(rq.getSlogan());
-                            new QuickPopup("Cập nhật trạng thái thành công");
-                            continue;
-                        }
-
-                        // Nếu là kiểu lay lich su chat
-                        if (rq.getType() == RequestType.HISTORY) {
-
-                            //showFormChat(rq.getFromUser(), rq.getToUser());
-                            friendHashMap.get(rq.getToUser()).setVisible(true);
-                            friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
-
-                            // update lịch sử tin nhắn
-                            continue;
-                        }
-
-                        // Nếu là kiểu lay lich su chat
-                        if (rq.getType() == RequestType.UNREADMSG) {
-
-                            //showFormChat(rq.getFromUser(), rq.getToUser());
-                            if (rq.getChatHistory() != null) {
-                                friendHashMap.get(rq.getToUser()).setVisible(true);
-                            }
-                            friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
-
-                            // update lịch sử tin nhắn
-                            continue;
-                        }
-
-                        // Nếu là kiểu search friend
-                        if (rq.getType() == RequestType.GET_SEARCH_LIST) {
-                            // Reset list
-                            listModel.removeAllElements();
-
-                            ArrayList<UserSimple> searchList = rq.getListFriend();
-                            if (searchList.size() > 0) {
-                                for (UserSimple userSimple : searchList) {
-                                    listModel.addElement(userSimple);
                                 }
-                            } else {
-                                listModel.addElement("Không tìm thấy user");
+                            }
+                            //Nếu trả về fullname
+                            if (rq.getType() == RequestType.CHANGE_FULLNAME) {
+                                txtFullname.setText(rq.getFullName());
+                                new QuickPopup("Cập nhật tên thành công thành công");
+                                continue;
                             }
 
-                            // Có kết thì update lại formsearch
-                            updateFormSearch();
-                            continue;
-                        }
+                            //Nếu trả về slogan
+                            if (rq.getType() == RequestType.CHANGE_SLOGAN) {
+                                txtSlogan.setText(rq.getSlogan());
+                                new QuickPopup("Cập nhật trạng thái thành công");
+                                continue;
+                            }
 
-                        // Nếu là kiểu yêu cầu kết bạn
-                        if (rq.getType() == RequestType.ASK_FRIEND) {
+                            // Nếu là kiểu lay lich su chat
+                            if (rq.getType() == RequestType.HISTORY) {
+
+                                //showFormChat(rq.getFromUser(), rq.getToUser());
+                                friendHashMap.get(rq.getToUser()).setVisible(true);
+                                friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
+
+                                // update lịch sử tin nhắn
+                                continue;
+                            }
+
+                            // Nếu là kiểu lay lich su chat
+                            if (rq.getType() == RequestType.UNREADMSG) {
+
+                                //showFormChat(rq.getFromUser(), rq.getToUser());
+                                if (rq.getChatHistory() != null) {
+                                    friendHashMap.get(rq.getToUser()).setVisible(true);
+                                }
+                                friendHashMap.get(rq.getToUser()).checkScrollBarReachTop(rq);
+
+                                // update lịch sử tin nhắn
+                                continue;
+                            }
+
+                            // Nếu là kiểu search friend
+                            if (rq.getType() == RequestType.GET_SEARCH_LIST) {
+                                // Reset list
+                                listModel.removeAllElements();
+
+                                ArrayList<UserSimple> searchList = rq.getListFriend();
+                                if (searchList.size() > 0) {
+                                    for (UserSimple userSimple : searchList) {
+                                        listModel.addElement(userSimple);
+                                    }
+                                } else {
+                                    listModel.addElement("Không tìm thấy user");
+                                }
+
+                                // Có kết thì update lại formsearch
+                                updateFormSearch();
+                                continue;
+                            }
+
+                            // Nếu là kiểu yêu cầu kết bạn
+                            if (rq.getType() == RequestType.ASK_FRIEND) {
 //                            String newFriend = rq.getFromUser();
 //                            listModel.addElement(newFriend);
 //                            continue;
-                            if (!rq.isUserExist()) {
-                                System.out.println("user KO ton tai");
-                            } else {
-                                System.out.println("user ton tai");
-                                // Nếu yêu cầu kết bạn đã đc gửi
-                                if (rq.isAskFriend()) {
-                                    new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, "Huong Ly - Đã gửi yêu cầu kết bạn", "ly", false, 0, false);
-                                    panelWrapper.revalidate();
-                                    panelWrapper.repaint();
+                                if (!rq.isUserExist()) {
+                                    System.out.println("user KO ton tai");
+                                } else {
+                                    System.out.println("user ton tai");
+                                    // Nếu yêu cầu kết bạn đã đc gửi
+                                    if (rq.isAskFriend()) {
+                                        new PanelEntity(getParentForm(), PanelType.PANEL_FRIEND, "Huong Ly - Đã gửi yêu cầu kết bạn", "ly", false, 0, false);
+                                        panelWrapper.revalidate();
+                                        panelWrapper.repaint();
+                                    }
                                 }
                             }
-                        }
 
-                    } // end while(true)
+                        } // end while(true)
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
 
                 } finally {
-                    try {
-                        is.close();
-                        os.close();
-                        sk.close();
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(FormMainClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+//                    try {
+//                        is.close();
+//                        os.close();
+//                        sk.close();
+//
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(FormMainClient.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
                     System.out.println("Connection Closed");
                 }
             }
